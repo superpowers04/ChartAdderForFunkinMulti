@@ -36,7 +36,7 @@ if not io.open('./hasusedmmcabs','r') then
 		print([[I see this is your first time running this. Please read this, this explains how to use it and other important info
 Important Stuff ----------
 
- This is meant for personal use only, DO NOT USE THIS AND THEN POST ANYTHING THIS MAKES ONTO GAMEBANANA.
+ This is meant for personal use only, DO NOT USE THIS AND THEN POST ANYTHING THIS MAKES ONTO GAMEBANANA OR ANY OTHER SITE UNLESS STRICTLY ALLOWED BY THE AUTHOR.
  Any mods made with this will probably get withheld for being low quality.
  This will always make the stage set to "Stage" and the character icon to Pico for any charts missing a config
  This wipes the songs.txt every time it's run.
