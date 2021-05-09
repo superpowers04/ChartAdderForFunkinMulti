@@ -15,7 +15,16 @@ function mv(from,to)
 		os.execute(f('mv %q %q',from,to))
 	end
 end
-function getlist(path)
+function fileexist(file)
+	print(file)
+	local fi = io.open(file,'r')
+	if fi then
+		return true
+	else
+		return false
+	end
+end
+function getlist(path) -- function to make things cleaner
 	local addstr = "" 
 	local configcount = 0
 	local count = 0
@@ -126,32 +135,36 @@ if iswindows then dircommand = 'dir %q /b' end
 
 -- Finding path for charts/songs
 local path = "./"
-if io.open('./filepath.txt','r') then
-	path,legacy = string.match(io.open('./filepath.txt','r'):read(),'path="(.-)"\nlegacy=(.-)') 
-	if not path then path,legacy = io.open('./filepath.txt','r'):read(),true end
+if fileexist('./filepath.txt','r') then
+	path,legacy = string.match(io.open('./filepath.txt','r'):read('*a'),'path="(.-)"\nlegacy=(.+)') 
+	if not path then path,legacy = io.open('./filepath.txt','r'):read('*a'),true end
 end
-if not io.open(path .. 'songs.txt','r') then
-	if io.open('../mods/songs.txt','r') then
+
+if not fileexist(path .. 'songs.txt') then
+	if fileexist('../mods/songs.txt') then -- 3.2+
 		path = '../mods/'
 		fp = io.open('./filepath.txt','w')
 		fp:write(f('path=%q\nlegacy=false',path))
-	elseif io.open('./mods/songs.txt','r') then
+	elseif fileexist('./mods/songs.txt') then
 		path = './mods/'
 		fp = io.open('./filepath.txt','w')
 		fp:write(f('path=%q\nlegacy=false',path))
-	-- Legacy support
-	elseif io.open('../mods/charts/songs.txt','r') then
+	-- Legacy support, or 3.1-
+	elseif fileexist('../mods/charts/songs.txt') then
 		path = '../mods/charts/'
 		fp = io.open('./filepath.txt','w')
 		fp:write(f('path=%q\nlegacy=true',path))
-	elseif io.open('./mods/charts/songs.txt','r') then
+		legacy = true
+	elseif fileexist('./mods/charts/songs.txt') then
 		path = './mods/charts/'
 		fp = io.open('./filepath.txt','w')
 		fp:write(f('path=%q\nlegacy=true',path))
-	elseif io.open('../charts/songs.txt','r') then
+		legacy = true
+	elseif fileexist('../charts/songs.txt') then
 		path = '../charts/'
 		fp = io.open('./filepath.txt','w')
 		fp:write(f('path=%q\nlegacy=true',path))
+		legacy = true
 	else
 
 		print("This script is unable to find songs.txt! \nPlease put everything from the zip in a new folder next to your mods folder, or put it next to 'funkinmulti.exe'.\n If you're unable to figure this out or it continues to cause issues then put the path to the charts folder in a file named 'filepath.txt' and then try again \nThis will only work with the Multiplayer mod.\nNo actions have been taken. Press enter to exit")
@@ -159,15 +172,16 @@ if not io.open(path .. 'songs.txt','r') then
 	end
 
 end
-if legacy == 'true' then legacy = true else legacy = false end
+print(legacy)
+if legacy == 'true' then legacy = true elseif legacy ~= true then legacy = false end -- check if legacy, if so then set it, else don't
 -- Actually formatting songs.txt and adding config files
 
 
 if not legacy then 
-	chartlist,chartcount,chartcfgcount = getlist(path.. 'charts/')
+	chartlist,chartcount,chartcfgcount = getlist(path.. 'charts/') -- Adds chart/ to check if not in legacy
 	-- TODO addsupport for Characters
 else
-	chartlist,chartcount,chartcfgcount = getlist(path)
+	chartlist,chartcount,chartcfgcount = getlist(path) -- Just use path for legacy
 end
 
 local charts = io.open(path .. 'songs.txt','w')
