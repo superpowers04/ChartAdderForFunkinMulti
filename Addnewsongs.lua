@@ -15,12 +15,70 @@ function mv(from,to)
 		os.execute(f('mv %q %q',from,to))
 	end
 end
+function getlist(path)
+	local addstr = "" 
+	local configcount = 0
+	local count = 0
+	for d in io.popen(f(dircommand,path)):lines() do -- This method is inefficient but makes sure that all songs are added to songs.txt
+		if (not string.match(addstr,d) or string.sub(d,-3) == '.ogg') and not string.match(d,'%!') then
+			local name = d
+			d = path .. d
+			print(d)
 
+			local exists = false
+			if iswindows then -- Compensation for Windows treating Dirs differently than Unix, Dammit Windows....
+				exists = io.open(d .. "Inst.ogg",'r') or io.open(d .. "Voices.ogg",'r') or io.open(d .. "/" .. name .. ".json",'r') or io.open(d .. "/config.json",'r')
+			else
+				exists = io.open(d,'r')
+			end
+			if exists then
+				local code = false
+				if not iswindows then -- Compensation for Windows treating Dirs differently than Unix, Dammit Windows....
+					_,_,code =  io.open(d,'r'):read() -- Open file for code
+				end
+				if iswindows or (code and tostring(code) == '21') then -- Code 21 stands for Directory, check if 'file' is Directory. Skip if on Windows as Windows treats Dirs differently than Unix, Dammit Windows....
+		 			if not io.open(d .. "Inst.ogg",'r') or io.open(d .. "Voices.ogg",'r') then 
+		 				if io.open(f("%s/%s_Inst.ogg",d,name),'r') then -- Rename NAME_Inst.ogg to Inst.ogg
+		 					mv(f("%s/%s_Inst.ogg",d,name),f('%s/Inst.ogg',d))
+		 				end
+		 				if io.open(f("%s/%s_Inst.ogg",d,name),'r') then -- Rename NAME_Voices.ogg to Voices.ogg
+		 					mv(f("%s/%s_Inst.ogg",d,name),f('%s/Inst.ogg',d))
+		 				end
+		 			end
+		 			if not io.open(f("%s/%s.json",d,name),'r') then
+		 				print(f('%q is missing a %s.json, this could cause crashing!',d,name))
+		 			end
+		 			if not io.open(d .. "/config.json")  then -- Add config if missing
+
+						print('Adding config to ' .. d)
+						local djson = f([[{"icon":"pico","stage":"stage","name":%q,"note":"Created using multiplayer mod chart adder by Super, Do not redistribute this file."}]],name)
+						local file = io.open(d .. '/config.json','w')
+						file:write(djson)
+						file:close()
+						configcount = configcount + 1
+					end
+					count = count + 1
+					addstr = name .. '\n' .. addstr -- Add to songs.txt buffer
+				elseif string.sub(d,-3) == 'ogg' then -- Rename and move 'Inst' and 'Voices' files
+					local n,t = string.match(name,'(.-)_(Inst).ogg') -- Matches with SONGNAME_Inst.ogg
+					if not t or not n then n,t = string.match(name,'(.-)_(Voices).ogg') end  -- Matches with SONGNAME_Voices.ogg
+					if n and t then
+						print(f("Moving %q to %q, If it isn't detected then rerun me!",d,f('%s%s/%s.ogg',path,n,t)))
+						mv(d,f('%s%s/%s.ogg',path,string.lower(n),t))
+					end
+				end
+			else
+				print(f("%q Seems to be missing or doesn't have a Inst,Voices or '%s.json'",d,name))
+			end
+		end
+	end
+	return addstr,count,configcount
+end
 
 
 -- Checking Operating system
 
-local iswindows = true
+iswindows = true
 if io.open('/dev','r') then
 	iswindows = false
 end
@@ -63,27 +121,37 @@ end
 
 
 
-local dircommand = 'dir -1 %q'
+dircommand = 'dir -1 %q'
 if iswindows then dircommand = 'dir %q /b' end
 
 -- Finding path for charts/songs
 local path = "./"
 if io.open('./filepath.txt','r') then
-	path = io.open('./filepath.txt','r'):read()
+	path,legacy = string.match(io.open('./filepath.txt','r'):read(),'path="(.-)"\nlegacy=(.-)') 
+	if not path then path,legacy = io.open('./filepath.txt','r'):read(),true end
 end
 if not io.open(path .. 'songs.txt','r') then
-	if io.open('../mods/charts/songs.txt','r') then
+	if io.open('../mods/songs.txt','r') then
+		path = '../mods/'
+		fp = io.open('./filepath.txt','w')
+		fp:write(f('path=%q\nlegacy=false',path))
+	elseif io.open('./mods/songs.txt','r') then
+		path = './mods/'
+		fp = io.open('./filepath.txt','w')
+		fp:write(f('path=%q\nlegacy=false',path))
+	-- Legacy support
+	elseif io.open('../mods/charts/songs.txt','r') then
 		path = '../mods/charts/'
 		fp = io.open('./filepath.txt','w')
-		fp:write(path)
+		fp:write(f('path=%q\nlegacy=true',path))
 	elseif io.open('./mods/charts/songs.txt','r') then
 		path = './mods/charts/'
 		fp = io.open('./filepath.txt','w')
-		fp:write(path)
+		fp:write(f('path=%q\nlegacy=true',path))
 	elseif io.open('../charts/songs.txt','r') then
 		path = '../charts/'
 		fp = io.open('./filepath.txt','w')
-		fp:write(path)
+		fp:write(f('path=%q\nlegacy=true',path))
 	else
 
 		print("This script is unable to find songs.txt! \nPlease put everything from the zip in a new folder next to your mods folder, or put it next to 'funkinmulti.exe'.\n If you're unable to figure this out or it continues to cause issues then put the path to the charts folder in a file named 'filepath.txt' and then try again \nThis will only work with the Multiplayer mod.\nNo actions have been taken. Press enter to exit")
@@ -91,69 +159,24 @@ if not io.open(path .. 'songs.txt','r') then
 	end
 
 end
+if legacy == 'true' then legacy = true else legacy = false end
 -- Actually formatting songs.txt and adding config files
-local addstr = "" 
-local configcount = 0
-local count = 0
 
-for d in io.popen(f(dircommand,path)):lines() do -- This method is inefficient but makes sure that all songs are added to songs.txt
-	if (not string.match(addstr,d) or string.sub(d,-3) == '.ogg') and not string.match(d,'%!') then
-		local name = d
-		d = path .. d
-		print(d)
 
-		local exists = false
-		if iswindows then -- Compensation for Windows treating Dirs differently than Unix, Dammit Windows....
-			exists = io.open(d .. "Inst.ogg",'r') or io.open(d .. "Voices.ogg",'r') or io.open(d .. "/" .. name .. ".json",'r') or io.open(d .. "/config.json",'r')
-		else
-			exists = io.open(d,'r')
-		end
-		if exists then
-			local code = false
-			if not iswindows then -- Compensation for Windows treating Dirs differently than Unix, Dammit Windows....
-				_,_,code =  io.open(d,'r'):read() -- Open file for code
-			end
-			if iswindows or (code and tostring(code) == '21') then -- Code 21 stands for Directory, check if 'file' is Directory. Skip if on Windows as Windows treats Dirs differently than Unix, Dammit Windows....
-	 			if not io.open(d .. "Inst.ogg",'r') or io.open(d .. "Voices.ogg",'r') then 
-	 				if io.open(f("%s/%s_Inst.ogg",d,name),'r') then -- Rename NAME_Inst.ogg to Inst.ogg
-	 					mv(f("%s/%s_Inst.ogg",d,name),f('%s/Inst.ogg',d))
-	 				end
-	 				if io.open(f("%s/%s_Inst.ogg",d,name),'r') then -- Rename NAME_Voices.ogg to Voices.ogg
-	 					mv(f("%s/%s_Inst.ogg",d,name),f('%s/Inst.ogg',d))
-	 				end
-	 			end
-	 			if not io.open(f("%s/%s.json",d,name),'r') then
-	 				print(f('%q is missing a %s.json, this could cause crashing!',d,name))
-	 			end
-	 			if not io.open(d .. "/config.json")  then -- Add config if missing
-
-					print('Adding config to ' .. d)
-					local djson = f([[{"icon":"pico","stage":"stage","name":%q,"note":"Created using multiplayer mod chart adder by Super, Do not redistribute this file."}]],name)
-					local file = io.open(d .. '/config.json','w')
-					file:write(djson)
-					file:close()
-					configcount = configcount + 1
-				end
-				count = count + 1
-				addstr = name .. '\n' .. addstr -- Add to songs.txt buffer
-			elseif string.sub(d,-3) == 'ogg' then -- Rename and move 'Inst' and 'Voices' files
-				local n,t = string.match(name,'(.-)_(Inst).ogg') -- Matches with SONGNAME_Inst.ogg
-				if not t or not n then n,t = string.match(name,'(.-)_(Voices).ogg') end  -- Matches with SONGNAME_Voices.ogg
-				if n and t then
-					print(f("Moving %q to %q, If it isn't detected then rerun me!",d,f('%s%s/%s.ogg',path,n,t)))
-					mv(d,f('%s%s/%s.ogg',path,string.lower(n),t))
-				end
-			end
-		else
-			print(f("%q Seems to be missing or doesn't have a Inst,Voices or '%s.json'",d,name))
-		end
-	end
+if not legacy then 
+	chartlist,chartcount,chartcfgcount = getlist(path.. 'charts/')
+	-- TODO addsupport for Characters
+else
+	chartlist,chartcount,chartcfgcount = getlist(path)
 end
+
 local charts = io.open(path .. 'songs.txt','w')
-charts:write(addstr) -- Save buffer
+charts:write(chartlist) -- Save buffer
 charts:close()
-print(f('Currently loaded charts/songs:\n%s',addstr))
-print(f("Entered %i songs into charts.txt, Added configs to %i songs.\nAll the songs/charts listed above should appear ingame, if several do not then check your songs.txt, Try removing every song but the ones causing an issue, and then once you figure out which one is causing it, try removing the config from it and making sure the first character is capitalized, Not all songs need this though. You can edit the songs.txt while the game is running\nPress enter to close",count,configcount))
+print(f('Currently loaded charts/songs:\n%s',chartlist))
+print(f([[Entered %i songs into charts.txt, Added configs to %i songs.
+All the songs/charts listed above should appear ingame, if several do not then check your songs.txt, Try removing every song but the ones causing an issue, and then once you figure out which one is causing it, try removing the config from it and making sure the first character is capitalized, Not all songs need this though. You can edit the songs.txt while the game is running
+Press enter to close]],chartcount,chartcfgcount))
 io.read()
 end) 
 if not succ then 
