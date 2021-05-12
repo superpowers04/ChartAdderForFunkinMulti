@@ -6,6 +6,704 @@
 f = string.format
 local succ,err = pcall(function() -- Wrapping in a pcall to prevent errors from closing the CMD
 
+-- Characters
+local chars = {	
+	--[[ Based off of Bald BF]] boyfriend = [[
+		{
+		"clone": "bf", "": "Copies the offsets of a character and a few interactions, disable it by removing this line or leaving it blank",
+		"no_antialiasing": false, "": "If set to true, forces antialiasing to be disabled, useful for Pixel characters",
+		"sing_duration": 4, "": "Duration of character sing animation's mult, Dad clones use 6.1 while everyone else uses 4",
+		"dance_idle": false, "": "Makes the character use danceRight/danceLeft animations instead of Idle, useful for Skid & Pump/GF clones",
+
+		"scale": 1, "": "Sprite scale on common stages, online lobby and Character Select screen, Senpai uses 6 while BF-Pixel/Spirit uses 6.6, everyone else uses 1",
+		"scale_pixel": 0.91, "": "Sprite scale on Pixel stages, Senpai/Spirit/BF-Pixel uses 6, everyone else uses 0.91",
+		"pixel_offset_scale": 0.91, "": "Fixes the animation offsets being a bit broken on Pixel stages for non-pixel characters, usually just set this to the same value as scale_pixel. This is dumb",
+		"online_offset_scale": 0.7, "": "Fixes the singing animations being a bit broken on Online Mode Lobby, Spirit/Senpai/BF-Pixel uses 1, everyone else uses 0.7. This is also dumb",
+
+		"voices": "bf", "": "Voices to be used on Lobby singing, set this to 'custom' if you want to use custom voice files, the files should be named 'sing_left.ogg', 'sing_up.ogg', 'sing_down.ogg' and 'sing_right.ogg', and should be located in your character's folder",
+		"alt_anims": false, "": "Enables alt animations like those from Parents-Christmas",
+		"flip_x": true, "": "Flips X axis from the sprite, useful for Boyfriend/Pico/Tankman clones",
+		"spirit_trail": false, "": "Enables Spirit's visual effect",
+		"read_only": false, "": "Hides it from character select (Both online, local mp and singleplayer), useful for decreasing your list size for characters you will never play with",
+
+		"animations":
+		[
+			{
+				"anim": "hey",
+				"name": "BF HEY",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "scared",
+				"name": "BF idle shaking",
+				"fps": 24,
+				"loop": true,
+				"indices": []
+			}
+		], "": "The idle/sing/miss animations are added automatically with the same values as Boyfriend's, you just have to add animations to this array if you want to edit something or add Hey/Scared animations to it",
+
+		"animations_offsets":
+		[],
+
+		"hey_anim": "hey", "": "Which animation should it use for the Bopeebo 'Hey!'",
+		"scared_anim": "scared", "": "Which animation should it use for Spooky Month stage scare",
+
+		"common_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on common stages as Player 1 and 2",
+		"pixel_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on Pixel stages as Player 1 and 2",
+		"local_multiplayer_offset": [0, 0], "": "Your character's offset on the Local Multiplayer/Singleplayer Character Select screen",
+		"online_offset": [0, 0], "": "Your character's offset on Online Mode lobby",
+		"playername_relative": 0, "": "Relative (Y) position from the Player Name to their character on Online Mode Lobby",
+
+		"": "Sometimes i hate my own code, good luck messing with this! I will probably convert the Animation Debug into a Character Editor someday, idk"
+	}]],
+	-- Thanks to natsuki cutie*baka#1279 for these JSON's 
+	mom=[[
+		{
+		"clone": "mom", "": "Copies the offsets of a character and a few interactions, disable it by removing this line or leaving it blank",
+		"no_antialiasing": false, "": "If set to true, forces antialiasing to be disabled, useful for Pixel characters",
+		"sing_duration": 6.1, "": "Duration of character sing animation's mult, Dad clones use 6.1 while everyone else uses 4",
+		"dance_idle": false, "": "Makes the character use danceRight/danceLeft animations instead of Idle, useful for Skid & Pump/GF clones",
+
+		"scale": 1, "": "Sprite scale on common stages, online lobby and Character Select screen, Senpai uses 6 while BF-Pixel/Spirit uses 6.6, everyone else uses 1",
+		"scale_pixel": 0.91, "": "Sprite scale on Pixel stages, Senpai/Spirit/BF-Pixel uses 6, everyone else uses 0.91",
+		"pixel_offset_scale": 0.91, "": "Fixes the animation offsets being a bit broken on Pixel stages for non-pixel characters, usually just set this to the same value as scale_pixel. This is dumb",
+		"online_offset_scale": 0.7, "": "Fixes the singing animations being a bit broken on Online Mode Lobby, Spirit/Senpai/BF-Pixel uses 1, everyone else uses 0.7. This is also dumb",
+
+		"voices": "mom", "": "Voices to be used on Lobby singing, set this to 'custom' if you want to use custom voice files, the files should be named 'sing_left.ogg', 'sing_up.ogg', 'sing_down.ogg' and 'sing_right.ogg', and should be located in your character's folder",
+		"alt_anims": false, "": "Enables alt animations like those from Parents-Christmas",
+		"flip_x": false, "": "Flips X axis from the sprite, useful for Boyfriend/Pico clones",
+
+		"animations":
+		[
+			{
+				"anim": "idle",
+				"name": "Mom Idle",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singUP",
+				"name": "Mom Up Pose",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singLEFT",
+				"name": "Mom Left Pose",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singRIGHT",
+				"name": "Mom Pose Left",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singDOWN",
+				"name": "MOM DOWN POSE",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singUPmiss",
+				"name": "Mom Up Pose",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singLEFTmiss",
+				"name": "Mom Left Pose",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singRIGHTmiss",
+				"name": "Mom Pose Left",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singDOWNmiss",
+				"name": "MOM DOWN POSE",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			}
+		], "": "The idle/sing/miss animations are added automatically with the same values as Boyfriend's for preventing a dumb crash, you just have to add animations to this array if you want to edit something or add Hey/Scared animations to it",
+		"hey_anim": "", "": "Which animation should it use for the Bopeebo 'Hey!'",
+		"scared_anim": "", "": "Which animation should it use for Spooky Month stage scare",
+
+		"animations_offsets":
+		[
+			{
+				"anim": "idle",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			},
+			{
+				"anim": "singUP",
+				"player1": [14, 71],
+				"player2": [34, 71]
+			},
+			{
+				"anim": "singRIGHT",
+				"player1": [10, -60],
+				"player2": [10, -40]
+			},
+			{
+				"anim": "singLEFT",
+				"player1": [85, -23],
+				"player2": [170, -23]
+			},
+			{
+				"anim": "singDOWN",
+				"player1": [20, -160],
+				"player2": [60, -160]
+			},
+			{
+				"anim": "singUPmiss",
+				"player1": [14, 71],
+				"player2": [34, 71]
+			},
+			{
+				"anim": "singRIGHTmiss",
+				"player1": [10, -60],
+				"player2": [10, -40]
+			},
+			{
+				"anim": "singLEFTmiss",
+				"player1": [85, -23],
+				"player2": [170, -23]
+			},
+			{
+				"anim": "singDOWNmiss",
+				"player1": [20, -160],
+				"player2": [60, -160]
+			}
+		],
+
+		"common_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on common stages as Player 1 and 2",
+		"pixel_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on Pixel stages as Player 1 and 2",
+		"local_multiplayer_offset": [0, -200], "": "Your character's offset on the Local Multiplayer/Singleplayer Character Select screen",
+		"online_offset": [0, -140], "": "Your character's offset on Online Mode lobby",
+		"playername_relative": 200, "": "Relative (Y) position from the Player Name to their character on Online Mode Lobby",
+
+		"": "Sometimes i hate my own code, good luck messing with this! I will probably convert the Animation Debug into a Character Editor someday, idk"
+	}]],
+	pico=[[
+		{
+			"clone": "pico",
+			"sing_duration": 4,
+			"scale": 1,
+			"scale_pixel": 0.91,
+			"pixel_offset_scale": 0.91,
+			"online_offset_scale": 0.7,
+
+			"voices": "pico",
+			"flip_x": true,
+
+			"animations":
+			[
+				{
+					"anim": "idle",
+					"name": "Pico Idle Dance",
+					"fps": 24,
+					"loop": false,
+					"indices": []
+				},
+				{
+					"anim": "singUP",
+					"name": "pico Up note",
+					"fps": 24,
+					"loop": false,
+					"indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+				},
+				{
+					"anim": "singLEFT",
+					"name": "Pico Note Right",
+					"fps": 24,
+					"loop": false,
+					"indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+				},
+				{
+					"anim": "singRIGHT",
+					"name": "Pico NOTE LEFT",
+					"fps": 24,
+					"loop": false,
+					"indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+				},
+				{
+					"anim": "singDOWN",
+					"name": "Pico Down Note",
+					"fps": 24,
+					"loop": false,
+					"indices": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+				},
+				{
+					"anim": "singUPmiss",
+					"name": "pico Up note miss",
+					"fps": 24,
+					"loop": false,
+					"indices": []
+				},
+				{
+					"anim": "singLEFTmiss",
+					"name": "Pico Note Right Miss", 
+					"fps": 24,
+					"loop": false,
+					"indices": []
+				},
+				{
+					"anim": "singRIGHTmiss",
+					"name": "Pico NOTE LEFT miss",
+					"fps": 24,
+					"loop": false,
+					"indices": []
+				},
+				{
+					"anim": "singDOWNmiss",
+					"name": "Pico Down Note MISS",
+					"fps": 24,
+					"loop": false,
+					"indices": []
+				}
+			],
+			"hey_anim": "",
+			"scared_anim": "",
+
+			"animations_offsets":
+			[
+				{
+					"anim": "idle",
+					"player1": [-220, 0],
+					"player2": [0, 0]
+				},
+				{
+					"anim": "singUP",
+					"player1": [-180, 20],
+					"player2": [-29, 27]
+				},
+				{
+					"anim": "singRIGHT",
+					"player1": [-240, 0],
+					"player2": [-88, -13]
+				},
+				{
+					"anim": "singLEFT",
+					"player1": [-90, -10],
+					"player2": [20, -8]
+				},
+				{
+					"anim": "singDOWN",
+					"player1": [-100, -70],
+					"player2": [171, -80]
+				},
+				{
+					"anim": "singUPmiss",
+					"player1": [-180, 40],
+					"player2": [-29, 27]
+				},
+				{
+					"anim": "singRIGHTmiss",
+					"player1": [-220, 30],
+					"player2": [-88, -13]
+				},
+				{
+					"anim": "singLEFTmiss",
+					"player1": [-180, 10],
+					"player2": [20, 11]
+				},
+				{
+					"anim": "singDOWNmiss",
+					"player1": [-120, -20],
+					"player2": [171, -70]
+				}
+			],
+
+			"common_stage_offset": [0, 0, 0, 0],
+			"pixel_stage_offset": [0, 0, 0, 0],
+			"local_multiplayer_offset": [-105, -60],
+			"online_offset": [-68, -24],
+			"playername_relative": 10
+		}
+	]],
+	dad=[[{
+		"clone": "dad",
+		"no_antialiasing": false,
+		"sing_duration": 6.1,
+		"dance_idle": false,
+
+		"scale": 1,
+		"scale_pixel": 0.91,
+		"pixel_offset_scale": 0.91,
+		"online_offset_scale": 0.7,
+
+		"voices": "dad",
+		"alt_anims": false,
+		"flip_x": false,
+
+		"animations":
+		[
+			{
+				"anim": "idle",
+				"name": "Dad idle dance",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singUP",
+				"name": "Dad Sing Note UP",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singLEFT",
+				"name": "Dad Sing Note LEFT",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singRIGHT",
+				"name": "Dad Sing Note RIGHT",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singDOWN",
+				"name": "Dad Sing Note DOWN",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singUPmiss",
+				"name": "Dad Sing Note UP",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singLEFTmiss",
+				"name": "Dad Sing Note LEFT",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singRIGHTmiss",
+				"name": "Dad Sing Note RIGHT",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singDOWNmiss",
+				"name": "Dad Sing Note DOWN",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			}
+		],
+		"hey_anim": "",
+		"scared_anim": "",
+
+		"animations_offsets":
+		[
+		],
+
+		"common_stage_offset": [0, 0, 0, 0],
+		"pixel_stage_offset": [0, 0, 0, 0],
+		"local_multiplayer_offset": [0, 50],
+		"online_offset": [0, 0],
+		"playername_relative": 0
+	}
+	]],
+	spooky=[[
+		{
+			"clone": "spooky", "": "Copies the offsets of a character and a few interactions, disable it by removing this line or leaving it blank",
+			"no_antialiasing": false, "": "If set to true, forces antialiasing to be disabled, useful for Pixel characters",
+			"sing_duration": 4, "": "Duration of character sing animation's mult, Dad clones use 6.1 while everyone else uses 4",
+			"dance_idle": true, "": "Makes the character use danceRight/danceLeft animations instead of Idle, useful for Skid & Pump/GF clones",
+
+			"scale": 1, "": "Sprite scale on common stages, online lobby and Character Select screen, Senpai uses 6 while BF-Pixel/Spirit uses 6.6, everyone else uses 1",
+			"scale_pixel": 0.91, "": "Sprite scale on Pixel stages, Senpai/Spirit/BF-Pixel uses 6, everyone else uses 0.91",
+			"pixel_offset_scale": 0.91, "": "Fixes the animation offsets being a bit broken on Pixel stages for non-pixel characters, usually just set this to the same value as scale_pixel. This is dumb",
+			"online_offset_scale": 0.7, "": "Fixes the singing animations being a bit broken on Online Mode Lobby, Spirit/Senpai/BF-Pixel uses 1, everyone else uses 0.7. This is also dumb",
+
+			"voices": "spooky", "": "Voices to be used on Lobby singing, set this to 'custom' if you want to use custom voice files, the files should be named 'sing_left.ogg', 'sing_up.ogg', 'sing_down.ogg' and 'sing_right.ogg', and should be located in your character's folder",
+			"alt_anims": false, "": "Enables alt animations like those from Parents-Christmas",
+			"flip_x": false, "": "Flips X axis from the sprite, useful for Boyfriend/Pico clones",
+
+			"animations":
+			[
+			    {
+					"anim": "danceLeft",
+					"name": "spooky dance idle",
+					"fps": 24,
+					"loop": false,
+					"indices": [0, 1, 2, 3, 4, 5]
+				},
+				{
+					"anim": "danceRight",
+					"name": "spooky dance idle",
+					"fps": 24,
+					"loop": false,
+					"indices": [6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+				},
+				{
+					"anim": "singUP",
+					"name": "spooky UP NOTE",
+					"fps": 24,
+					"loop": false,
+					"indices": []
+				},
+				{
+					"anim": "singLEFT",
+					"name": "note sing left",
+					"fps": 24,
+					"loop": false,
+					"indices": []
+				},
+				{
+					"anim": "singRIGHT",
+					"name": "spooky sing right",
+					"fps": 24,
+					"loop": false,
+					"indices": []
+				},
+				{
+					"anim": "singDOWN",
+					"name": "spooky DOWN note",
+					"fps": 24,
+					"loop": false,
+					"indices": []
+				},
+				{
+					"anim": "singUPmiss",
+					"name": "spooky UP NOTE",
+					"fps": 24,
+					"loop": false,
+					"indices": []
+				},
+				{
+					"anim": "singLEFTmiss",
+					"name": "note sing left",
+					"fps": 24,
+					"loop": false,
+					"indices": []
+				},
+				{
+					"anim": "singRIGHTmiss",
+					"name": "spooky sing right",
+					"fps": 24,
+					"loop": false,
+					"indices": []
+				},
+				{
+					"anim": "singDOWNmiss",
+					"name": "spooky DOWN note",
+					"fps": 24,
+					"loop": false,
+					"indices": []
+				}
+			], "": "The idle/sing/miss animations are added automatically with the same values as Boyfriend's for preventing a dumb crash, you just have to add animations to this array if you want to edit something or add Hey/Scared animations to it",
+			"hey_anim": "", "": "Which animation should it use for the Bopeebo 'Hey!'",
+			"scared_anim": "", "": "Which animation should it use for Spooky Month stage scare",
+
+			"animations_offsets":
+			[
+				{
+					"anim": "singUP",
+					"player1": [-57, 24],
+					"player2": [-15, 24]
+				},
+				{
+					"anim": "singRIGHT",
+					"player1": [-75, -20],
+					"player2": [-85, -14]
+				},
+			    {
+					"anim": "singDOWN",
+					"player1": [-24, -138],
+					"player2": [47, -138]
+				},
+				{
+					"anim": "singLEFT",
+					"player1": [97, -10],
+					"player2": [137, -24]
+				},
+				{
+					"anim": "singUPmiss",
+					"player1": [-57, 24],
+					"player2": [-15, 24]
+				},
+				{
+					"anim": "singRIGHTmiss",
+					"player1": [-75, -20],
+					"player2": [-85, -14]
+				},
+			    {
+					"anim": "singDOWNmiss",
+					"player1": [-24, -138],
+					"player2": [47, -138]
+				},
+				{
+					"anim": "singLEFTmiss",
+					"player1": [97, -10],
+					"player2": [137, -24]
+				}
+			],
+
+			"common_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on common stages as Player 1 and 2",
+			"pixel_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on Pixel stages as Player 1 and 2",
+			"local_multiplayer_offset": [0, -50], "": "Your character's offset on the Local Multiplayer/Singleplayer Character Select screen",
+			"online_offset": [0, 0], "": "Your character's offset on Online Mode lobby",
+			"playername_relative": 0, "": "Relative (Y) position from the Player Name to their character on Online Mode Lobby",
+
+			"": "Sometimes i hate my own code, good luck messing with this! I will probably convert the Animation Debug into a Character Editor someday, idk"
+		}
+	]],
+	senpai=[[
+		{
+		"clone": "senpai",
+		"sing_duration": 4,
+		"no_antialiasing": true,
+		"scale": 6,
+		"scale_pixel": 6,
+		"pixel_offset_scale": 1,
+		"online_offset_scale": 1,
+
+		"voices": "custom",
+		"flip_x": false,
+
+		"animations":
+		[
+			{
+				"anim": "idle",
+				"name": "Senpai Idle",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singUP",
+				"name": "SENPAI UP NOTE",
+				"fps": 24,
+				"loop": true,
+				"indices": []
+			},
+			{
+				"anim": "singLEFT",
+				"name": "SENPAI LEFT NOTE",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singRIGHT",
+				"name": "SENPAI RIGHT NOTE",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singDOWN",
+				"name": "SENPAI DOWN NOTE",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singUPmiss",
+				"name": "SENPAI UP note miss",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singLEFTmiss",
+				"name": "SENPAI LEFT note miss",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singRIGHTmiss",
+				"name": "SENPAI RIGHT note miss",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singDOWNmiss",
+				"name": "SENPAI DOWN note miss",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			}
+		],
+		"hey_anim": "",
+		"scared_anim": "",
+
+		"animations_offsets": [],
+
+		"common_stage_offset": [0, 30, 0, 0],
+		"pixel_stage_offset": [0, 30, 0, 0],
+		"local_multiplayer_offset": [180, -30],
+		"online_offset": [75, 0],
+		"playername_relative": 170
+		}
+	]],
+
+}
+chars.init = function(self) -- Just here to prevent repeating code
+	
+	self.bf = self.boyfriend
+	self.bfcar = self.boyfriend
+	self.bfchristmas = self.boyfriend
+	self.spookies = self.spooky
+	self.spookeez = self.spooky
+	self.momcar = self.mom
+	self.weeb = self.senpai
+	self['bf-car'] = self.boyfriend
+	self['mom-car'] = self.mom
+	self['mom-assets'] = self.mom
+	self['mom_assets'] = self.mom
+	self['momassets'] = self.mom
+	self['daddy-dearest'] = self.dad
+	self['daddy_dearest'] = self.dad
+	self['daddydearest'] = self.dad
+	self['daddy'] = self.dad
+	self['spooky_kids_assets'] = self.spooky
+	self['spooky_kids'] = self.spooky
+	self['spooky-kids-assets'] = self.spooky
+	self['spooky-kids'] = self.spooky
+	self['pico_fnf_assetss'] = self.pico
+	self['pico_fnf_assets'] = self.pico
+	self['pico_fnf'] = self.pico
+	self['pico-fnf-assetss'] = self.pico
+	self['pico-fnf-assets'] = self.pico
+	self['pico-fnf'] = self.pico
+
+end
+chars:init()
+
+
 -- Move function, compensate for Windows using move instead of mv
 
 function mv(from,to)
@@ -25,6 +723,7 @@ function fileexist(file)
 	end
 end
 function getlist(path) -- function to make things cleaner
+	-- if legacy then path = path .. 'charts/' end
 	local addstr = "" 
 	local configcount = 0
 	local count = 0
@@ -45,6 +744,7 @@ function getlist(path) -- function to make things cleaner
 				if not iswindows then -- Compensation for Windows treating Dirs differently than Unix, Dammit Windows....
 					_,_,code =  io.open(d,'r'):read() -- Open file for code
 				end
+
 				if iswindows or (code and tostring(code) == '21') then -- Code 21 stands for Directory, check if 'file' is Directory. Skip if on Windows as Windows treats Dirs differently than Unix, Dammit Windows....
 		 			if not io.open(d .. "Inst.ogg",'r') or io.open(d .. "Voices.ogg",'r') then 
 		 				if io.open(f("%s/%s_Inst.ogg",d,name),'r') then -- Rename NAME_Inst.ogg to Inst.ogg
@@ -84,7 +784,64 @@ function getlist(path) -- function to make things cleaner
 	return addstr,count,configcount
 end
 
+function getlistchar(path) -- function to make things cleaner
+	local addstr = "" 
+	local configcount = 0
+	local count = 0
+	for d in io.popen(f(dircommand,path)):lines() do -- This method is inefficient but makes sure that all songs are added to songs.txt
+		if (not string.match(addstr,d) or string.sub(d,-3) == '.ogg') and not string.match(d,'%!') then
+			local name = d
+			d = path .. d
+			print(d)
+			
+			local exists = false
+			if iswindows then -- Compensation for Windows treating Dirs differently than Unix, Dammit Windows....
+				exists = io.open(d .. "Inst.ogg",'r') or io.open(d .. "Voices.ogg",'r') or io.open(d .. "/" .. name .. ".json",'r') or io.open(d .. "/config.json",'r')
+			else
+				exists = io.open(d,'r')
+			end
+			if exists then
+				local code = false
+				
+				if not iswindows then -- Compensation for Windows treating Dirs differently than Unix, Dammit Windows....
+					_,_,code =  io.open(d,'r'):read() -- Open file for code
+				end
+				
+				if iswindows or (code and tostring(code) == '21') then -- Code 21 stands for Directory, check if 'file' is Directory. Skip if on Windows as Windows treats Dirs differently than Unix, Dammit Windows....
+					local contain = '\n' .. io.popen(f(dircommand,d),'r'):read('*a') -- Folder contents
+					local json = chars.boyfriend -- Init var for config
+					local char = string.match(contain,'\n([^%.]-)%.xml') -- Grab name of XML
+					-- print(char)
+					if char and char ~= 'character' then 
+						if chars[string.lower(char)] then -- Check if XML is in Chars
+							json = chars[string.lower(char)]
+							print(f('%s contains a recognised XML, renaming and using %s(or their respective config) as a config base',name,char)) 
+						elseif not io.open(d .. "/config.json") then
+							print(f('%s does not contain a XML with a known character, defaulting to BOYFRIEND'))
+						end
 
+						mv(f('%s/%s.xml',d,char),f('%s/character.xml',d))
+						mv(f('%s/%s.png',d,char),f('%s/character.png',d))
+					end
+		 			if not io.open(d .. "/config.json")  then -- Add config if missing
+
+						print('Adding config to ' .. d)
+						local djson = f(json,name)
+						local file = io.open(d .. '/config.json','w')
+						file:write(djson)
+						file:close()
+						configcount = configcount + 1
+					end
+					count = count + 1
+					-- addstr = name .. '\n' .. addstr -- Add to characters.txt buffer
+				end
+			else
+				print(f("%q Seems to be missing or doesn't have a Inst,Voices or '%s.json'",d,name))
+			end
+		end
+	end
+	return addstr,count,configcount
+end
 -- Checking Operating system
 
 iswindows = true
@@ -175,23 +932,47 @@ end
 print(legacy)
 if legacy == 'true' then legacy = true elseif legacy ~= true then legacy = false end -- check if legacy, if so then set it, else don't
 -- Actually formatting songs.txt and adding config files
-
-
-if not legacy then 
-	chartlist,chartcount,chartcfgcount = getlist(path.. 'charts/') -- Adds chart/ to check if not in legacy
-	-- TODO addsupport for Characters
-else
-	chartlist,chartcount,chartcfgcount = getlist(path) -- Just use path for legacy
+local skip = false
+if not legacy then
+	print([[It seems you're using 3.2, would you like to skip generating charts and just generate characters?
+Press S and then Enter to skip or Press enter to continue]])
+	skip = io.read()
 end
+if (not skip or string.lower(skip) ~= "s") or legacy then
+	if legacy then
+		chartlist,chartcount,chartcfgcount = getlist(path)
+	else
+		chartlist,chartcount,chartcfgcount = getlist(path .. 'charts/')
+	end
+	if chartlist then 
+		local charts = io.open(path .. 'songs.txt','w')
+		charts:write(chartlist) -- Save buffer
+		charts:close()
+		print(f('Currently loaded charts/songs:\n%s',chartlist))
+		print(f([[Entered %i songs into charts.txt, Added configs to %i songs.
+		All the songs/charts listed above should appear ingame, if several do not then check your songs.txt, Try removing every song but the ones causing an issue, and then once you figure out which one is causing it, try removing the config from it and making sure the first character is capitalized, Not all songs need this though. You can edit the songs.txt while the game is running]],chartcount,chartcfgcount))
+		if legacy then print('Press enter to close') else print('Press enter to continue') end
+		io.read()
+	end
+end
+if not legacy then 
+	print([[It seems you're using 3.2, Would you like to generate characters?
+Press S and then Enter to skip or Press enter to continue]])
+	skip = io.read()
 
-local charts = io.open(path .. 'songs.txt','w')
-charts:write(chartlist) -- Save buffer
-charts:close()
-print(f('Currently loaded charts/songs:\n%s',chartlist))
-print(f([[Entered %i songs into charts.txt, Added configs to %i songs.
-All the songs/charts listed above should appear ingame, if several do not then check your songs.txt, Try removing every song but the ones causing an issue, and then once you figure out which one is causing it, try removing the config from it and making sure the first character is capitalized, Not all songs need this though. You can edit the songs.txt while the game is running
-Press enter to close]],chartcount,chartcfgcount))
-io.read()
+	if not skip or string.lower(skip) ~= "s" then
+		local charlist,charcount,charcfgcount = getlistchar(path.. 'characters/') -- Adds characters/ to check if not in legacy
+		if charlist then 
+			-- local charsf = io.open(path .. 'characters.txt','w')
+			-- charsf:write(charlist) -- Save buffer
+			-- charsf:close()
+			-- print(f('Currently loaded chars:\n%s',charlist))
+			print(f([[Found and scanned %i characters, Added configs to %i songs.]],charcount,charcfgcount))
+			print('Press enter to close')
+			io.read()
+		end
+	end
+end
 end) 
 if not succ then 
 	print(f('%s\nSomething went wrong, Please report this! Press enter to exit',err))
