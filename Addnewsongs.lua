@@ -669,7 +669,6 @@ local chars = {
 		"playername_relative": 170
 		}
 	]],
-
 }
 chars.init = function(self) -- Just here to prevent repeating code
 	
@@ -699,10 +698,19 @@ chars.init = function(self) -- Just here to prevent repeating code
 	self['pico-fnf-assetss'] = self.pico
 	self['pico-fnf-assets'] = self.pico
 	self['pico-fnf'] = self.pico
-
 end
 chars:init()
+local charaliases = {
+	['boyfriend'] = 'bf',
 
+}
+local configjson = [[{
+	"icon":%q,
+	"icon_2": "pico",
+	"stage":%q,
+	"name":%q,
+	"note":"Created using multiplayer mod chart adder by Super, Do not redistribute this file."
+}]]
 
 -- Move function, compensate for Windows using move instead of mv
 
@@ -712,6 +720,20 @@ function mv(from,to)
 	else
 		os.execute(f('mv %q %q',from,to))
 	end
+end
+function question(options) -- Function for grabbing an answer
+	local answer = string.lower(io.read())
+	if type(options) == 'string' then
+		if answer ~= options then return true else return false end
+	elseif type(options) == 'number' then
+		if tonumber(answer) ~= options then return true else return false end
+	elseif type(options) == 'table' then
+		for k,v in pairs(options) do
+			if tostring(v) == answer then return true end
+		end
+		return false
+	end
+	return false
 end
 function fileexist(file)
 	print(file)
@@ -760,7 +782,17 @@ function getlist(path) -- function to make things cleaner
 		 			if not io.open(d .. "/config.json")  then -- Add config if missing
 
 						print('Adding config to ' .. d)
-						local djson = f([[{"icon":"pico","stage":"stage","name":%q,"note":"Created using multiplayer mod chart adder by Super, Do not redistribute this file."}]],name)
+						local cfg = {
+							icon='pico',
+							stage='stage'
+						}
+						if advancedmode then
+							print(f('\n%s needs a icon, Pico is used by default and as a fallback.\nPlease enter a character icon. Press Enter to skip and use pico',name))
+							local a = string.lower(io.read())
+							if charaliases[a] then cfg.icon = charaliases[a] else cfg.icon = a end
+							-- TODO Add stages table and require picking from them		
+						end
+						local djson = f(configjson,cfg.icon,cfg.stage,name)
 						local file = io.open(d .. '/config.json','w')
 						file:write(djson)
 						file:close()
@@ -927,18 +959,22 @@ if not fileexist(path .. 'songs.txt') then
 		print("This script is unable to find songs.txt! \nPlease put everything from the zip in a new folder next to your mods folder, or put it next to 'funkinmulti.exe'.\n If you're unable to figure this out or it continues to cause issues then put the path to the charts folder in a file named 'filepath.txt' and then try again \nThis will only work with the Multiplayer mod.\nNo actions have been taken. Press enter to exit")
 		return io.read()
 	end
-
 end
-print(legacy)
+-- print(legacy)
 if legacy == 'true' then legacy = true elseif legacy ~= true then legacy = false end -- check if legacy, if so then set it, else don't
 -- Actually formatting songs.txt and adding config files
 local skip = false
+advancedmode = false
 if not legacy then
 	print([[It seems you're using 3.2, would you like to skip generating charts and just generate characters?
 Press S and then Enter to skip or Press enter to continue]])
-	skip = io.read()
+	skip = question({'s','sk','ski','skip','y','yes'})
 end
-if (not skip or string.lower(skip) ~= "s") or legacy then
+if (not skip) or legacy then
+	print([[Would you like to manually specify icons or stages?
+By default icons are set to 'Pico' and stages are set to 'Stage'
+If you do not understand this or don't then just press enter, otherwise type 'y' or 'yes']])
+	advancedmode = question({'yes','y','ye'}) -- Advanced mode, For people who want to select the icons or stage
 	if legacy then
 		chartlist,chartcount,chartcfgcount = getlist(path)
 	else
@@ -958,16 +994,16 @@ end
 if not legacy then 
 	print([[It seems you're using 3.2, Would you like to generate characters?
 Press S and then Enter to skip or Press enter to continue]])
-	skip = io.read()
+	skip = question({'s','sk','ski','skip','y','yes'})
 
-	if not skip or string.lower(skip) ~= "s" then
+	if not skip then
 		local charlist,charcount,charcfgcount = getlistchar(path.. 'characters/') -- Adds characters/ to check if not in legacy
 		if charlist then 
 			-- local charsf = io.open(path .. 'characters.txt','w')
 			-- charsf:write(charlist) -- Save buffer
 			-- charsf:close()
 			-- print(f('Currently loaded chars:\n%s',charlist))
-			print(f([[Found and scanned %i characters, Added configs to %i songs.]],charcount,charcfgcount))
+			print(f([[Found and scanned %i characters, Added configs to %i characters.]],charcount,charcfgcount))
 			print('Press enter to close')
 			io.read()
 		end
