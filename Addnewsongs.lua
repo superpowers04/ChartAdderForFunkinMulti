@@ -849,7 +849,7 @@ function getlistchar(path) -- function to make things cleaner
 							json = chars[string.lower(char)]
 							print(f('%s contains a recognised XML, renaming and using %s(or their respective config) as a config base',name,char)) 
 						elseif not io.open(d .. "/config.json") then
-							print(f('%s does not contain a XML with a known character, defaulting to BOYFRIEND'))
+							print(f('%s does not contain a XML with a known character, defaulting to BOYFRIEND',name))
 						end
 
 						mv(f('%s/%s.xml',d,char),f('%s/character.xml',d))
