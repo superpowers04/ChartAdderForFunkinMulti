@@ -138,7 +138,7 @@ local chars = {
 		"pixel_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on Pixel stages as Player 1 and 2",
 		"local_multiplayer_offset": [0, 0], "": "Your character's offset on the Local Multiplayer/Singleplayer Character Select screen",
 		"online_offset": [0, 0], "": "Your character's offset on Online Mode lobby",
-		"playername_relative": 0, "": "Relative (Y) position from the Player Name to their character on Online Mode Lobby",
+		"playername_relative": 0, "": "Relative (Y) position from the Player Name to their character on Online Mode Lobby"
 	}]],
 	-- Thanks to natsuki cutie*baka#1279 for these JSON's 
 	mom=[[
