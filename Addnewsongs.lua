@@ -84,10 +84,10 @@ local chars = {
 		"hey_anim": "", "": "Which animation should it use for the Bopeebo 'Hey!'",
 		"scared_anim": "", "": "Which animation should it use for Spooky Month stage scare",
 
-		"common_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on common stages as Player 1 and 2",
-		"pixel_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on Pixel stages as Player 1 and 2",
-		"local_multiplayer_offset": [0, 0], "": "Your character's offset on the Local Multiplayer/Singleplayer Character Select screen",
-		"online_offset": [0, 0], "": "Your character's offset on Online Mode lobby",
+		"common_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on common stages as Player 1 and 2, Handled as [x,y,x,y]. Higher the y the lower, the higher the X the more to the right",
+		"pixel_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on Pixel stages as Player 1 and 2, Handled as [x,y,x,y]. Higher the y the lower, the higher the X the more to the right",
+		"local_multiplayer_offset": [0, 0], "": "Your character's offset on the Local Multiplayer/Singleplayer Character Select screen, Handled as [x,y]. Higher the y the lower, the higher the X the more to the right",
+		"online_offset": [0, 0], "": "Your character's offset on Online Mode lobby, Handled as [x,y]. Higher the y the lower, the higher the X the more to the right",
 		"playername_relative": 0, "": "Relative (Y) position from the Player Name to their character on Online Mode Lobby",
 
 		"": "Sometimes i hate my own code, good luck messing with this! I will probably convert the Animation Debug into a Character Editor someday, idk"
