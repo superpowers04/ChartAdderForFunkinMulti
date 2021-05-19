@@ -8,6 +8,90 @@ local succ,err = pcall(function() -- Wrapping in a pcall to prevent errors from 
 
 -- Characters
 local chars = {	
+	blank=[[
+		{
+		"": "Generated automatically in multiplayer mod chart adder by Super",
+		"clone": "", "": "Copies the offsets of a character and a few interactions, disable it by removing this line or leaving it blank",
+		"no_antialiasing": false, "": "If set to true, forces antialiasing to be disabled, useful for Pixel characters",
+		"sing_duration": 4, "": "Duration of character sing animation's mult, Dad clones use 6.1 while everyone else uses 4",
+		"dance_idle": false, "": "Makes the character use danceRight/danceLeft animations instead of Idle, useful for Skid & Pump/GF clones",
+
+		"scale": 1, "": "Sprite scale on common stages, online lobby and Character Select screen, Senpai uses 6 while BF-Pixel/Spirit uses 6.6, everyone else uses 1",
+		"scale_pixel": 0.91, "": "Sprite scale on Pixel stages, Senpai/Spirit/BF-Pixel uses 6, everyone else uses 0.91",
+		"pixel_offset_scale": 0.91, "": "Fixes the animation offsets being a bit broken on Pixel stages for non-pixel characters, usually just set this to the same value as scale_pixel. This is dumb",
+		"online_offset_scale": 0.7, "": "Fixes the singing animations being a bit broken on Online Mode Lobby, Spirit/Senpai/BF-Pixel uses 1, everyone else uses 0.7. This is also dumb",
+
+		"voices": "bf", "": "Voices to be used on Lobby singing, set this to 'custom' if you want to use custom voice files, the files should be named 'sing_left.ogg', 'sing_up.ogg', 'sing_down.ogg' and 'sing_right.ogg', and should be located in your character's folder",
+		"alt_anims": false, "": "Enables alt animations like those from Parents-Christmas",
+		"flip_x": true, "": "Flips X axis from the sprite, useful for Boyfriend/Pico/Tankman clones",
+		"spirit_trail": false, "": "Enables Spirit's visual effect",
+		"read_only": false, "": "Hides it from character select (Both online, local mp and singleplayer), useful for decreasing your list size for characters you will never play with",
+
+		"animations":
+		[
+			%s
+		], "": "The idle/sing/miss animations are added automatically with the same values as Boyfriend's, you just have to add animations to this array if you want to edit something or add Hey/Scared animations to it",
+
+		"animations_offsets":
+		[			
+			{
+				"anim": "idle",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			},
+			{
+				"anim": "singUP",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			},
+			{
+				"anim": "singRIGHT",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			},
+			{
+				"anim": "singLEFT",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			},
+			{
+				"anim": "singDOWN",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			},
+			{
+				"anim": "singUPmiss",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			},
+			{
+				"anim": "singRIGHTmiss",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			},
+			{
+				"anim": "singLEFTmiss",
+				"player1": [0, 0],
+				"player2": [0,0]
+			},
+			{
+				"anim": "singDOWNmiss",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			}
+		], "":"These are here as a template, by default they do nothing"
+
+		"hey_anim": "hey", "": "Which animation should it use for the Bopeebo 'Hey!'",
+		"scared_anim": "scared", "": "Which animation should it use for Spooky Month stage scare",
+
+		"common_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on common stages as Player 1 and 2",
+		"pixel_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on Pixel stages as Player 1 and 2",
+		"local_multiplayer_offset": [0, 0], "": "Your character's offset on the Local Multiplayer/Singleplayer Character Select screen",
+		"online_offset": [0, 0], "": "Your character's offset on Online Mode lobby",
+		"playername_relative": 0, "": "Relative (Y) position from the Player Name to their character on Online Mode Lobby",
+
+		"": "Sometimes i hate my own code, good luck messing with this! I will probably convert the Animation Debug into a Character Editor someday, idk"
+	}]],
 	--[[ Based off of Bald BF]] boyfriend = [[
 		{
 		"clone": "bf", "": "Copies the offsets of a character and a few interactions, disable it by removing this line or leaving it blank",
@@ -55,8 +139,6 @@ local chars = {
 		"local_multiplayer_offset": [0, 0], "": "Your character's offset on the Local Multiplayer/Singleplayer Character Select screen",
 		"online_offset": [0, 0], "": "Your character's offset on Online Mode lobby",
 		"playername_relative": 0, "": "Relative (Y) position from the Player Name to their character on Online Mode Lobby",
-
-		"": "Sometimes i hate my own code, good luck messing with this! I will probably convert the Animation Debug into a Character Editor someday, idk"
 	}]],
 	-- Thanks to natsuki cutie*baka#1279 for these JSON's 
 	mom=[[
@@ -669,6 +751,173 @@ local chars = {
 		"playername_relative": 170
 		}
 	]],
+	gf=[[
+	{
+		"clone": "gf", "": "Copies the offsets of a character and a few interactions, disable it by removing this line or leaving it blank",
+		"no_antialiasing": false, "": "If set to true, forces antialiasing to be disabled, useful for Pixel characters",
+		"sing_duration": 4, "": "Duration of character sing animation's mult, Dad clones use 6.1 while everyone else uses 4",
+		"dance_idle": true, "": "Makes the character use danceRight/danceLeft animations instead of Idle, useful for Skid & Pump/GF clones",
+
+		"scale": 1, "": "Sprite scale on common stages, online lobby and Character Select screen, Senpai uses 6 while BF-Pixel/Spirit uses 6.6, everyone else uses 1",
+		"scale_pixel": 0.91, "": "Sprite scale on Pixel stages, Senpai/Spirit/BF-Pixel uses 6, everyone else uses 0.91",
+		"pixel_offset_scale": 0.91, "": "Fixes the animation offsets being a bit broken on Pixel stages for non-pixel characters, usually just set this to the same value as scale_pixel. This is dumb",
+		"online_offset_scale": 0.7, "": "Fixes the singing animations being a bit broken on Online Mode Lobby, Spirit/Senpai/BF-Pixel uses 1, everyone else uses 0.7. This is also dumb",
+
+		"voices": "gf", "": "Voices to be used on Lobby singing, set this to 'custom' if you want to use custom voice files, the files should be named 'sing_left.ogg', 'sing_up.ogg', 'sing_down.ogg' and 'sing_right.ogg', and should be located in your character's folder",
+		"alt_anims": false, "": "Enables alt animations like those from Parents-Christmas",
+		"flip_x": false, "": "Flips X axis from the sprite, useful for Boyfriend/Pico clones",
+
+		"animations":
+		[
+			{
+				"anim": "danceLeft",
+				"name": "GF Dancing Beat0",
+				"fps": 24,
+				"loop": false,
+				"indices": [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+			},
+			{
+				"anim": "danceRight",
+				"name": "GF Dancing Beat0",
+				"fps": 24,
+				"loop": false,
+				"indices": [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+			},
+			{
+				"anim": "singUP",
+				"name": "GF Up Note",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singLEFT",
+				"name": "GF left note",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singRIGHT",
+				"name": "GF Right Note",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singDOWN",
+				"name": "GF Down Note",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singUPmiss",
+				"name": "GF Up Note",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singLEFTmiss",
+				"name": "GF left note",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singRIGHTmiss",
+				"name": "GF Right Note",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+				"anim": "singDOWNmiss",
+				"name": "GF Down Note",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+		    {
+				"anim": "cheer",
+				"name": "GF Cheer",
+				"fps": 24,
+				"loop": false,
+				"indices": []
+			},
+			{
+			   "anim": "scared",
+			   "name": "GF FEAR",
+			   "fps": 24,
+			   "loop": false,
+			   "indices": []
+			},
+			{
+			   "anim": "hairBlow",
+			   "name": "GF Dancing Beat Hair blowing",
+			   "fps": 24,
+			   "loop": false,
+			   "indices": []
+			},
+			{
+			   "anim": "hairFall",
+			   "name": "GF Dancing Beat Hair Landing",
+			   "fps": 24,
+			   "loop": false,
+			   "indices": []
+			}
+		], 
+		"hey_anim": "cheer", 
+		"scared_anim": "scared",
+
+		"animations_offsets":
+		[
+		    {
+				"anim": "singLEFT",
+				"player1": [0, -19],
+				"player2": [0, -19]
+			},
+			{
+				"anim": "singRIGHT",
+				"player1": [0, -20],
+				"player2": [0, -20]
+			},
+			{
+				"anim": "singUP",
+				"player1": [0, 4],
+				"player2": [0, 4]
+			},
+			{
+				"anim": "singLEFTmiss",
+				"player1": [0, -19],
+				"player2": [0, -19]
+			},
+			{
+				"anim": "singRIGHTmiss",
+				"player1": [0, -20],
+				"player2": [0, -20]
+			},
+			{
+				"anim": "singUPmiss",
+				"player1": [0, 4],
+				"player2": [0, 4]
+			},
+			{
+				"anim": "singDOWNmiss",
+				"player1": [0, -20],
+				"player2": [0, -20]
+			}
+		],
+
+		"common_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on common stages as Player 1 and 2",
+		"pixel_stage_offset": [0, 50, 0, 50], "": "Your character's offset ingame on Pixel stages as Player 1 and 2",
+		"local_multiplayer_offset": [0, 0], "": "Your character's offset on the Local Multiplayer/Singleplayer Character Select screen",
+		"online_offset": [-80, -115], "": "Your character's offset on Online Mode lobby",
+		"playername_relative": 100, "": "Relative (Y) position from the Player Name to their character on Online Mode Lobby",
+
+		"": "Sometimes i hate my own code, good luck messing with this! I will probably convert the Animation Debug into a Character Editor someday, idk"
+	}]]
 }
 chars.init = function(self) -- Just here to prevent repeating code
 	
@@ -698,8 +947,20 @@ chars.init = function(self) -- Just here to prevent repeating code
 	self['pico-fnf-assetss'] = self.pico
 	self['pico-fnf-assets'] = self.pico
 	self['pico-fnf'] = self.pico
+	self['gf-assets'] = self.gf
+	self['gf_assets'] = self.gf
+	self['girlfriend'] = self.gf
+	self['gf-christmas'] = self.gf
+	self['gfchristmas'] = self.gf
 end
 chars:init()
+local animpatts = {
+	["idle"]='<SubTexture name="([^"]-[iI][dD][lL][eE][^"]-)%d%d%d%d" .-/>',
+	["singRIGHT"]='<SubTexture name="([^"]-[Rr][iI][gG][hH][tT][^"]-)%d%d%d%d" .-/>',
+	["singLEFT"]='<SubTexture name="([^"]-[lL][eE][fF][tT][^"]-)%d%d%d%d" .-/>',
+	["singDOWN"]='<SubTexture name="([^"]-[Dd][oO][wW][nN][^"]-)%d%d%d%d" .-/>',
+	["singUP"]='<SubTexture name="([^"]-[uU][pP][^"]-)%d%d%d%d" .-/>',
+} -- All the animation patterns used for looking for animation id's
 local charaliases = {
 	['boyfriend'] = 'bf',
 
@@ -736,7 +997,7 @@ function question(options) -- Function for grabbing an answer
 	return false
 end
 function fileexist(file)
-	print(file)
+	if not file then return false end
 	local fi = io.open(file,'r')
 	if fi then
 		return true
@@ -815,6 +1076,20 @@ function getlist(path) -- function to make things cleaner
 	end
 	return addstr,count,configcount
 end
+function isdir(path)
+	if iswindows then -- Compensation for Windows treating Dirs differently than Unix, Dammit Windows....
+		-- return io.popen([[if exist "%s/*" echo true]],'r'):read() ~= '' -- took me 5 hours to get this line and it's pretty inefficient, not using it
+		local _,_,code = io.open(path,'r')
+		if not code or code ~= 13 then return false end
+		return true -- Honestly, I give up, this will incorrectly return true if a file doesn't have permission but I don't know any other fast ways of doing it. It's very unlikely for there to be permission issues
+	else
+		local code = false
+		local succ = pcall(function() _,_,code = io.open(path,'r'):read() end)
+		if not succ then return false end
+		return (code and code == 21)
+	end
+	return false
+end
 
 function getlistchar(path) -- function to make things cleaner
 	local addstr = "" 
@@ -826,49 +1101,80 @@ function getlistchar(path) -- function to make things cleaner
 			d = path .. d
 			print(d)
 			
-			local exists = false
-			if iswindows then -- Compensation for Windows treating Dirs differently than Unix, Dammit Windows....
-				exists = io.open(d .. "Inst.ogg",'r') or io.open(d .. "Voices.ogg",'r') or io.open(d .. "/" .. name .. ".json",'r') or io.open(d .. "/config.json",'r')
-			else
-				exists = io.open(d,'r')
-			end
-			if exists then
+
+			if fileexist(d) or isdir(d) then
 				local code = false
-				
-				if not iswindows then -- Compensation for Windows treating Dirs differently than Unix, Dammit Windows....
-					_,_,code =  io.open(d,'r'):read() -- Open file for code
-				end
-				
-				if iswindows or (code and tostring(code) == '21') then -- Code 21 stands for Directory, check if 'file' is Directory. Skip if on Windows as Windows treats Dirs differently than Unix, Dammit Windows....
+
+
+
+				if isdir(d) then -- Function for checking if it's a directory
 					local contain = '\n' .. io.popen(f(dircommand,d),'r'):read('*a') -- Folder contents
 					local json = chars.boyfriend -- Init var for config
-					local char = string.match(contain,'\n([^%.]-)%.xml') -- Grab name of XML
+					local char = string.match(contain,'\n([^%.\n]-)%.xml') -- Grab name of XML
+					hasconfig = fileexist(d .. "/config.json")
 					-- print(char)
-					if char and char ~= 'character' then 
-						if chars[string.lower(char)] then -- Check if XML is in Chars
-							json = chars[string.lower(char)]
-							print(f('%s contains a recognised XML, renaming and using %s(or their respective config) as a config base',name,char)) 
-						elseif not io.open(d .. "/config.json") then
-							print(f('%s does not contain a XML with a known character, defaulting to BOYFRIEND',name))
+					if char and (not hasconfig) then 
+						if not config then
+							if chars[string.lower(char)] then -- Check if XML is in Chars
+								json = chars[string.lower(char)]
+								print(f('%s contains a recognised XML, renaming and using %s(or their respective config) as a config base',name,char)) 
+							else
+								print(f("\n%s does not contain a XML with a known character(It has %s), Would you like to try automatically detecting what animations to use?\nThis will not setup offsets, you probably will have to do that manually\nBoyfriend's animations will be used otherwise\nIf you don't then just press enter, otherwise type 'y' or 'yes'",name,char))
+								local autodet = question({'yes','y','ye'})
+								if autodet then
+									local xmlfile = ""
+									local succ,err = pcall(function() xmlfile = io.open(f('%s/%s.xml',d,char)):read('*a') end) -- Open file in catched environment
+									if succ then
+										if xmlfile ~= "" then 
+											local animids = {}
+											local err = false
+											local animlist = {}
+											for k,v in pairs(animpatts) do
+												local animid = string.match(xmlfile,v)
+												if not animid then -- Unable to find animation id
+													err = k
+													break
+												end
+												table.insert(animlist,f('		{\n			"anim": %q,\n			"name": %q,\n			"fps": 24,\n			"loop": true,\n			"indices": []\n		}',k,animid) )-- Add anim info to list
+											end
+											if not err then
+												json = string.format(chars.blank,table.concat(animlist,',\n'))
+												print(f('Successfully formatted config for %s',name))
+											else
+												print(f('Unable to find animation ID for %s, defaulting to boyfriend XML',k)) -- Unable to find animation id
+											end
+										else
+											print(f('The XML came back as empty! Defaulting to boyfriend XML'))
+										end
+									else
+										print(f('Something went wrong when trying to open the XML, Error:%s, Char:%q,Dir:%q\ndefaulting to boyfriend XML',err,char,d)) -- XML couldn't be opened
+									end
+									print('Press enter to continue')
+									io.read()
+								end
+							end
 						end
-
-						mv(f('%s/%s.xml',d,char),f('%s/character.xml',d))
-						mv(f('%s/%s.png',d,char),f('%s/character.png',d))
+						if char ~= 'character' then 
+							mv(f('%s/%s.xml',d,char),f('%s/character.xml',d))
+							mv(f('%s/%s.png',d,char),f('%s/character.png',d))
+						end
 					end
-		 			if not io.open(d .. "/config.json")  then -- Add config if missing
+		 			if not hasconfig and char then -- Add config if missing
 
-						print('Adding config to ' .. d)
-						local djson = f(json,name)
-						local file = io.open(d .. '/config.json','w')
-						file:write(djson)
+						print(f('Adding config to %s',name))
+						
+						local file = io.open(f('%s/config.json',d),'w')
+						file:write(json)
 						file:close()
 						configcount = configcount + 1
+					elseif not char then
+						print(f('%s does not contain any character files.',name))
 					end
 					count = count + 1
 					-- addstr = name .. '\n' .. addstr -- Add to characters.txt buffer
 				end
 			else
-				print(f("%q Seems to be missing or doesn't have a Inst,Voices or '%s.json'",d,name))
+				print(f("%q does not contain any character files or is invalid.",d,name))
 			end
 		end
 	end
