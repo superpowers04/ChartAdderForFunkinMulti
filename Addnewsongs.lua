@@ -23,7 +23,7 @@ local chars = {
 
 		"voices": "bf", "": "Voices to be used on Lobby singing, set this to 'custom' if you want to use custom voice files, the files should be named 'sing_left.ogg', 'sing_up.ogg', 'sing_down.ogg' and 'sing_right.ogg', and should be located in your character's folder",
 		"alt_anims": false, "": "Enables alt animations like those from Parents-Christmas",
-		"flip_x": true, "": "Flips X axis from the sprite, useful for Boyfriend/Pico/Tankman clones",
+		"flip_x": %s, "": "Flips X axis from the sprite, useful for Boyfriend/Pico/Tankman clones",
 		"spirit_trail": false, "": "Enables Spirit's visual effect",
 		"read_only": false, "": "Hides it from character select (Both online, local mp and singleplayer), useful for decreasing your list size for characters you will never play with",
 
@@ -79,10 +79,10 @@ local chars = {
 				"player1": [0, 0],
 				"player2": [0, 0]
 			}
-		], "":"These are here as a template, by default they do nothing"
+		], "":"These are here as a template, by default they do nothing",
 
-		"hey_anim": "hey", "": "Which animation should it use for the Bopeebo 'Hey!'",
-		"scared_anim": "scared", "": "Which animation should it use for Spooky Month stage scare",
+		"hey_anim": "", "": "Which animation should it use for the Bopeebo 'Hey!'",
+		"scared_anim": "", "": "Which animation should it use for Spooky Month stage scare",
 
 		"common_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on common stages as Player 1 and 2",
 		"pixel_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on Pixel stages as Player 1 and 2",
@@ -1138,7 +1138,9 @@ function getlistchar(path) -- function to make things cleaner
 												table.insert(animlist,f('		{\n			"anim": %q,\n			"name": %q,\n			"fps": 24,\n			"loop": true,\n			"indices": []\n		}',k,animid) )-- Add anim info to list
 											end
 											if not err then
-												json = string.format(chars.blank,table.concat(animlist,',\n'))
+												print(f("Should the character be flipped? If it's a Boyfriend/Pico/Tankman clone, then Yes otherwise, no\nY to set to true and anything else to set it to false"))
+												local flipx = question({'yes','y','ye','true'})
+												json = string.format(chars.blank,flipx,table.concat(animlist,',\n'))
 												print(f('Successfully formatted config for %s',name))
 											else
 												print(f('Unable to find animation ID for %s, defaulting to boyfriend XML',k)) -- Unable to find animation id
