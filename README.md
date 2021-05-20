@@ -37,6 +37,7 @@ Updater.lua does not automatically update
 			S  - Sync notes on both sides
 			O  - Don't remove any overlapping notes(Use this if your chart is missing random notes and overlapping notes aren't an issue)
 			r  - Reverses the order of note information(Use this if your chart is missing random notes)
+			g  - prompts for overlap distance, the maximum distance between notes before it gets deleted
 			f  - Format output JSON to make human readable (Requires NodeJS to be installed to work)
  ```
  Useful for if you want to make a chart easier(-d), if a chart has multiple notes in a single note(Causing inputs to not register) or if the chart just needs to be cleaned
