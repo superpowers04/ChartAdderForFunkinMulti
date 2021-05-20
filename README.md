@@ -27,6 +27,7 @@ If you end up having any issues with this, feel free to comment on the Gamebanan
 
 # ChartFixer (Basic terminal knowledge and computer common sense required) UNFINISHED
 Updater.lua does not automatically update
+**Requires http://dkolf.de/src/dkjson-lua.fsl/home to work**
 ```Friday Night Funkin' Chart reparser. Reparses charts to fix any possible bugs
 		Chartfixer.lua [-cdSOf] (Input JSON or Input File path) [Output file dir]
 			Using -h or providing no arguments will show this dialog
