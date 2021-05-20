@@ -9,6 +9,7 @@ local syncsides = false -- Syncing both sides
 local noteReverse = false -- Reversed note info
 local print = print
 local oldprint = print
+local overlapdistance = 0.00001
 
 function sameside(side1,side)
 	return noteattribs.ids[noteattribs.mapped[tostring(side1)]][tostring(side)] or false
@@ -32,6 +33,7 @@ do -- Argument handling
 			S  - Sync notes on both sides
 			O  - Don't remove any overlapping notes(Use this if your chart is missing random notes and overlapping notes aren't an issue)
 			r  - Reverses the order of note information(Use this if your chart is missing random notes)
+			g  - prompts for overlap distance, the maximum distance between notes before it gets deleted
 			f  - Format output JSON to make human readable (Requires Node)
 
 	]])
@@ -61,6 +63,11 @@ do -- Argument handling
 				oldprint('Reversing note info order')
 				noteReverse = not noteReverse
 			end,
+			g = function()
+				print('Please specify overlap distance')
+				overlapdistance = tonumber(io.read())
+				if not overlapdistance then print('Invalid number') os.exit() end
+			end,
 		}
 		for argument in string.gmatch(arg[1],'[%d%w]') do
 			if not arguments[argument] then return print(f('%s is not a valid command switch! use -help to see all of the command switches',argument)) end
@@ -79,7 +86,7 @@ do -- Argument handling
 		-- if arg[3] == '-f' then format = true end
 		outputfile = arg[2] or arg[1]
 		file = io.open(arg[1],'r')
-		if not file then return print('No file to parse!') end
+		if not file then return print('Invalid file specified!') end
 		chartjson = file:read('*a')
 		file:close()
 	end
@@ -167,7 +174,7 @@ for sid,section in pairs(chart.song.notes) do
 
 					local timebetween = nextnote.time - note.time -- Get time between notes
 					if timebetween < -0.1 then timebetween = -timebetween end
-					if timebetween < 0.00001 and nextnote.id ==  nextnote.id and not overlap then -- Compare notes
+					if timebetween < overlapdistance and nextnote.id ==  nextnote.id and not overlap then -- Compare notes
 						if timebetween < -1 then
 							print(f('Next note has less time than this one! Doing nothing! %s',timebetween))
 						else
@@ -177,7 +184,7 @@ for sid,section in pairs(chart.song.notes) do
 					end
 					if doubleRemoval then
 						local timebetween = nextnote.time - note.time
-						if timebetween < 0.00001 and nextnote.id ~= note.id and sameside(nextnote.id,note.id) then
+						if timebetween < overlapdistance and nextnote.id ~= note.id and sameside(nextnote.id,note.id) then
 							print(f('Skipping %s,%s',json.encode(nextnote),json.encode(note)))
 							skip = true -- Skip next note if this note and next note are the same
 						end
