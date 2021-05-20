@@ -77,7 +77,7 @@ do -- Argument handling
 		end
 	else
 		-- if arg[3] == '-f' then format = true end
-		outputfile = tostring(arg[2])
+		outputfile = arg[2] or arg[1]
 		file = io.open(arg[1],'r')
 		chartjson = file:read('*a')
 		file:close()
