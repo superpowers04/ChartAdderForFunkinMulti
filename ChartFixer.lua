@@ -79,6 +79,7 @@ do -- Argument handling
 		-- if arg[3] == '-f' then format = true end
 		outputfile = arg[2] or arg[1]
 		file = io.open(arg[1],'r')
+		if not file then return print('No file to parse!') end
 		chartjson = file:read('*a')
 		file:close()
 	end
