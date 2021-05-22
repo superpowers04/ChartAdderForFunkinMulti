@@ -22,6 +22,31 @@ function getNote(note) -- This should not need to exist but sometimes things lik
 	return newnote
 end
 
+
+
+function spairs(t, order) -- Grabbed from https://stackoverflow.com/a/15706820 
+    -- collect the keys
+    local keys = {}
+    for k in pairs(t) do keys[#keys+1] = k end
+
+    -- if order function given, sort by it by passing the table and keys a, b,
+    -- otherwise just sort the keys 
+    if order then
+        table.sort(keys, function(a,b) return order(t, a, b) end)
+    else
+        table.sort(keys)
+    end
+
+    -- return the iterator function
+    local i = 0
+    return function()
+        i = i + 1
+        if keys[i] then
+            return keys[i], t[keys[i]]
+        end
+    end
+end
+
 do -- Argument handling
 	if not arg[1] or arg[1] == '-h' then
 		print([[Friday Night Funkin' Chart reparser. Reparses charts to fix any possible bugs and such
@@ -149,7 +174,7 @@ for sid,section in pairs(chart.song.notes) do
 	if section.sectionNotes then
 		chart.song.notes[sid].sectionNotes = {}
 		section.crossFade = nil
-		for nid,oldnote in pairs(chartold.song.notes[sid].sectionNotes) do -- Loop through chart notes to be copied
+		for nid,oldnote in spairs(chartold.song.notes[sid].sectionNotes,function(t,a,b) return t[b][1] > t[a][1] end) do -- Loop through chart notes to be copied
 			if not skip and oldnote then
 
 				--[[
