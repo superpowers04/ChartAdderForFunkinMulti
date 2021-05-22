@@ -1,252 +1,79 @@
+-- Created specifically for adding configs and songs for https://shadowmario.itch.io/funkinmulti or https://gamebanana.com/mods/44205
+-- This code isn't the cleanest but should work pretty well
+-- Feel free to ask for help with this and feel free to edit/redistribute this. Just don't remove the disclaimer and please give credit
+-- Originally created by Superpowers04, https://gamebanana.com/members/1622031 on gamebanana and Superpowers04#3887 on Discord
+
+-- This is the updater
+local debugmode = false -- Change to true to disable updating
 local f = string.format
-local json = require('dkjson')
-local file = false
-local format = false -- Whether to format JSON
-local stdout = false -- Output to STDOUT
-local doubleRemoval = false -- Remove double directional notes
-local overlap = false -- Overlapping notes
-local syncsides = false -- Syncing both sides
-local noteReverse = false -- Reversed note info
-local print = print
-local oldprint = print
-local overlapdistance = 0.00001
-
-function sameside(side1,side)
-	return noteattribs.ids[noteattribs.mapped[tostring(side1)]][tostring(side)] or false
-end
-function getNote(note) -- This should not need to exist but sometimes things like to invert the note
-	if not note then return false end
-	local newnote = {}
-	if noteReverse then newnote.time = note[3];newnote.length = note[1] else newnote.time = note[1];newnote.length = note[3] end
-	newnote.id = note[2]
-	return newnote
-end
-
-
-
-function spairs(t, order) -- Grabbed from https://stackoverflow.com/a/15706820 
-    -- collect the keys
-    local keys = {}
-    for k in pairs(t) do keys[#keys+1] = k end
-
-    -- if order function given, sort by it by passing the table and keys a, b,
-    -- otherwise just sort the keys 
-    if order then
-        table.sort(keys, function(a,b) return order(t, a, b) end)
-    else
-        table.sort(keys)
-    end
-
-    -- return the iterator function
-    local i = 0
-    return function()
-        i = i + 1
-        if keys[i] then
-            return keys[i], t[keys[i]]
-        end
-    end
-end
-
-do -- Argument handling
-	if not arg[1] or arg[1] == '-h' then
-		print([[Friday Night Funkin' Chart reparser. Reparses charts to fix any possible bugs and such
-		Chartfixer.lua [-cdSOf] (Input JSON or Input File path) [Output file dir]
-			Using -h or providing no arguments will show this dialog
-		Arguments:
-			c  - Output to STDout
-			d  - Remove any double directional notes
-			S  - Sync notes on both sides
-			O  - Don't remove any overlapping notes(Use this if your chart is missing random notes and overlapping notes aren't an issue)
-			r  - Reverses the order of note information(Use this if your chart is missing random notes)
-			g  - prompts for overlap distance, the maximum distance between notes before it gets deleted
-			f  - Format output JSON to make human readable (Requires Node)
-
-	]])
-	end
-	if string.sub(arg[1],0,1) == '-' then 
-		local arguments = {
-			c=function()-- Output to STDOUT
-				print = io.write
-				stdout = true
-			end,
-			d = function()
-				oldprint('Removing doubles')
-				doubleRemoval = true
-			end,
-			f = function()
-				format = true
-			end,
-			O = function()
-				oldprint('Allowing overlaps')
-				overlap = true
-			end,
-			S = function()
-				oldprint('Syncing both sides')
-				syncsides = true
-			end,
-			r = function()
-				oldprint('Reversing note info order')
-				noteReverse = not noteReverse
-			end,
-			g = function()
-				print('Please specify overlap distance')
-				overlapdistance = tonumber(io.read())
-				if not overlapdistance then print('Invalid number') os.exit() end
-			end,
-		}
-		for argument in string.gmatch(arg[1],'[%d%w]') do
-			if not arguments[argument] then return print(f('%s is not a valid command switch! use -help to see all of the command switches',argument)) end
-			arguments[argument]()
-		end
-		table.remove(arg,1)
-
-	end
-	if string.match(arg[1],'{') then 
-		if string.match(arg[1],'}') then -- Check if arg[1] is a JSON string
-			chartjson = arg[1]
-		else -- Else format entire arg list
-			chartjson = string.match(table.concat(arg,' '),'[^\\]?({.-[^\\]})')
-		end
-	else
-		-- if arg[3] == '-f' then format = true end
-		outputfile = arg[2] or arg[1]
-		file = io.open(arg[1],'r')
-		if not file then return print('Invalid file specified!') end
-		chartjson = file:read('*a')
-		file:close()
+-- print('Checking for updates...')
+local iswindows = true
+if io.open('/dev','r') then iswindows = false end
+function curl(url)
+	if iswindows then -- Windows
+		return assert(io.popen(f('cURL/curl.exe -s %q',url),'r'):read('*a'))
+	else -- Unix
+		return assert(io.popen(f('curl -s %q',url),'r'):read('*a'))
 	end
 end
-
-do -- Error handling and loading chart
-	chart = json.decode(chartjson)
-	chartold = json.decode(chartjson)
-	if not chart then return print('NO CHART TO PARSE') end
-	if not chart.song then return print('MISSING SONG') end
-	if not chart.song.notes and not chart.notes then return print('MISSING NOTES') end
+function clear() -- Clears the command prompt/window
+	if iswindows then return os.execute('cls') else return os.execute('clear') end
 end
-noteattribs= {}
-noteattribs.named = {
-	'left',
-	'up',
-	'down',
-	'right',
-	'left-2nd',
-	'up-2nd',
-	'down-2nd',
-	'right-2nd',
-}
-noteattribs.invert = {
+local verfile = io.open('version','r')
+version = ' Not installed!'
+if verfile then version = verfile:read('*a') end
 
-	4,5,6,7,3,2,1,0
-}
-noteattribs.mapped={
 
-		['4']='right',['5']='right',['6']='right',['7']='right',['3']='left',['2']='left',['1']='left',['0']='left'
-}
-noteattribs.ids = {
-	left={
-		['3']=true,['2']=true,['1']=true,['0']=true
-	},
-	right={
-		['4']=true,['5']=true,['6']=true,['7']=true
-	}
-}
-blocked = {
-	crossFade=true
-}
-if not chart.song.notes and chart.notes then -- Why is this even a thing?
-	chart.song.notes = chart.notes 
-	chartold.song.notes = chartold.notes 
-end
-
--- Clean chart because it's needed for some reason
-for k,v in pairs(chart) do
-	if string.lower(k) ~= "song" then 
-		if not chart.song[k] and not blocked[k] then
-			chart.song[k] = v
-			chart[k] = nil
-		end
-		chart[k] = nil
-	end
-end
-
-for sid,section in pairs(chart.song.notes) do
-	if section.sectionNotes then
-		chart.song.notes[sid].sectionNotes = {}
-		section.crossFade = nil
-		for nid,oldnote in spairs(chartold.song.notes[sid].sectionNotes,function(t,a,b) return t[b][1] > t[a][1] end) do -- Loop through chart notes to be copied
-			if not skip and oldnote then
-
-				--[[
-					Usual layout:
-				    {
-				    TIME,
-				    NOTE,
-				    LENGTH
-				  	}
-				]]
-				-- local note.time = oldnote[3]
-
-				local note = getNote(oldnote) -- Normal note
-				-- note[1] = oldnote[1]
-				-- note[2]= oldnote[2]
-				
-				local nextnote = getNote(chartold.song.notes[sid].sectionNotes[nid + 1] or chartold.song.notes[sid + 1].sectionNotes[1])
-				
-				if nextnote then
-					if nextnote.time == 0 then nextnote.time = -nextnote.time end
-					if note.time == 0 then note.time = -nextnote.time end
-
-					local timebetween = nextnote.time - note.time -- Get time between notes
-					if timebetween < -0.1 then timebetween = -timebetween end
-					if timebetween < overlapdistance and nextnote.id ==  nextnote.id and not overlap then -- Compare notes
-						if timebetween < -1 then
-							print(f('Next note has less time than this one! Doing nothing! %s',timebetween))
-						else
-							print(f('Skipping %s',timebetween))
-							skip = true -- Skip next note if this note and next note are the same
-						end
-					end
-					if doubleRemoval then
-						local timebetween = nextnote.time - note.time
-						if timebetween < overlapdistance and nextnote.id ~= note.id and sameside(nextnote.id,note.id) then
-							print(f('Skipping %s,%s',json.encode(nextnote),json.encode(note)))
-							skip = true -- Skip next note if this note and next note are the same
-						end
-					end
-
+function update() -- Check for updates and update if needed 
+	
+	if not debugmode then -- Don't execute
+		local versionurl = "https://raw.githubusercontent.com/superpowers04/ChartAdderForFunkinMulti/main/version" -- Change this to your URL if you're forking it
+		print('Checking for updates...')
+		local onlinever = 0.0 
+		onlinever = curl(versionurl) -- download and check version from github
+		if onlinever == '' then print('Unable to check for updates!') io.read() return end
+		if onlinever then onlinever = string.gsub(onlinever,'\n','') end
+		if onlinever and onlinever ~= version then
+			print(f('New update available %s! Your version:%s, Would you like to update?\nIf updating does not work, then you can use the alternative download from the gamebanana page\nType "y" and press enter to update or anything else to skip',onlinever,version))
+			answer = string.lower(io.read())
+			if answer and answer == 'y' then 
+				clear()
+				print('Updating...')
+				-- io.open('./version','w'):write(onlinever)
+				local update = curl('https://raw.githubusercontent.com/superpowers04/ChartAdderForFunkinMulti/main/Addnewsongs.lua') -- Grab latest lua file
+				if update == '' or not string.match(update,'https://shadowmario.itch.io/funkinmult') then -- Make sure download actually contains lua file
+					print(f('Something went wrong when trying to update! I got no response',err))
+					io.read() 
+					return 
 				end
-				table.insert(chart.song.notes[sid].sectionNotes,{note.time,note.id,note.length})
 				
-				if syncsides then -- Syncing sides
-					local note2 = {} -- Reversed Note
-					note2.time = note.time
-					note2.id= noteattribs.invert[note.id+1] -- Adds one to account for Lua counting from one, not zero
-					note2.length = note.length	
-					table.insert(chart.song.notes[sid].sectionNotes,{note2.time,note2.id,note2.length})
-				
-					if nextnote and (math.floor(nextnote.time) == math.floor(note2.time) and math.floor(nextnote.time) == math.floor(note2.time)) then -- Compare notes
-						skip = true -- Skip if this note and next note are the same
-					end
-
+				local succ,err = pcall(function()load(update)end) -- Run in pcall to catch errors
+				if not succ then -- If there's an error, print it!
+					print(f('Something went wrong when trying to update! Please report:%s\nPress enter to continue',err))
+					io.read() 
+					return 
+				end
+				local succ = io.open('Addnewsongs.lua','w'):write(update)
+				if succ then 
+					io.open('version','w'):write(onlinever)
+					print('Finished updating. Press enter to continue')
+					io.read()
+				else
+					print('Something went wrong when trying to save, You might have to reinstall!')
+					io.read()
+					os.exit()
 				end
 			else
-				skip = false
+				print('Skipping update!')
 			end
+		elseif onlinever and onlinever == version then
+			print('Uptodate, Nothing to do')
+		else
+			print('Unable to check for updates!\nPress enter to continue')
+			io.read()
 		end
 
 	end
 end
-chart.song.sections = sectionCount
-chart.song.speed = tonumber(chart.song.speed)
-chart.song.bpm = tonumber(chart.song.bpm)
-if stdout then return io.write(json.encode(chart)) end
-if format then
-	io.open('output.json','w'):write(json.encode(chart))
-	io.popen(f([[( read p;node -e $p ;mv 'output.json' %q) << EOL
-	fs.readFile('output.json',function(_,data){fs.writeFile('output.json',JSON.stringify(JSON.parse(data.toString()),null,2),function(){})})
-	EOL]],outputfile))
-else
-	if not outputfile then return io.write(json.encode(chart)) end
-	io.open(outputfile,'w'):write(json.encode(chart))
-end
+update()
+dofile('Addnewsongs.lua')
