@@ -10,6 +10,7 @@ local noteReverse = false -- Reversed note info
 local print = print
 local oldprint = print
 local overlapdistance = 0.00001
+local songSpeed = 1
 
 function sameside(side1,side)
 	return noteattribs.ids[noteattribs.mapped[tostring(side1)]][tostring(side)] or false
@@ -60,6 +61,7 @@ do -- Argument handling
 			r  - Reverses the order of note information(Use this if your chart is missing random notes)
 			g  - prompts for overlap distance, the maximum distance between notes before it gets deleted
 			f  - Format output JSON to make human readable (Requires Node)
+			h  - Speeds up chart 1.25
 
 	]])
 	end
@@ -93,6 +95,10 @@ do -- Argument handling
 				overlapdistance = tonumber(io.read())
 				if not overlapdistance then print('Invalid number') os.exit() end
 			end,
+			h = function()
+				print('Speeding up chart')
+				songSpeed = 1.25
+			end,
 		}
 		for argument in string.gmatch(arg[1],'[%d%w]') do
 			if not arguments[argument] then return print(f('%s is not a valid command switch! use -help to see all of the command switches',argument)) end
@@ -101,6 +107,7 @@ do -- Argument handling
 		table.remove(arg,1)
 
 	end
+	if not arg[1] then return print('NO CHART TO PARSE') end
 	if string.match(arg[1],'{') then 
 		if string.match(arg[1],'}') then -- Check if arg[1] is a JSON string
 			chartjson = arg[1]
@@ -174,9 +181,10 @@ for sid,section in pairs(chart.song.notes) do
 	if section.sectionNotes then
 		chart.song.notes[sid].sectionNotes = {}
 		section.crossFade = nil
+		local lastnote = false
 		for nid,oldnote in spairs(chartold.song.notes[sid].sectionNotes,function(t,a,b) return t[b][1] > t[a][1] end) do -- Loop through chart notes to be copied
 			if not skip and oldnote then
-
+				local skipnow = false
 				--[[
 					Usual layout:
 				    {
@@ -194,16 +202,17 @@ for sid,section in pairs(chart.song.notes) do
 				local nextnote = getNote(chartold.song.notes[sid].sectionNotes[nid + 1] or chartold.song.notes[sid + 1].sectionNotes[1])
 				
 				if nextnote then
-					if nextnote.time == 0 then nextnote.time = -nextnote.time end
-					if note.time == 0 then note.time = -nextnote.time end
+					if nextnote.time < 0 then nextnote.time = -nextnote.time end
+					if note.time < 0 then note.time = -nextnote.time end
 
 					local timebetween = nextnote.time - note.time -- Get time between notes
 					if timebetween < -0.1 then timebetween = -timebetween end
-					if timebetween < overlapdistance and nextnote.id ==  nextnote.id and not overlap then -- Compare notes
-						if timebetween < -1 then
+					if timebetween < overlapdistance and note.id == nextnote.id and not overlap then -- Compare notes
+						if timebetween < -0.5 then
 							print(f('Next note has less time than this one! Doing nothing! %s',timebetween))
 						else
 							print(f('Skipping %s',timebetween))
+							if nextnote.length < note.length then note.length = nextnote.length end
 							skip = true -- Skip next note if this note and next note are the same
 						end
 					end
@@ -216,7 +225,32 @@ for sid,section in pairs(chart.song.notes) do
 					end
 
 				end
-				table.insert(chart.song.notes[sid].sectionNotes,{note.time,note.id,note.length})
+				if lastnote then
+					if lastnote.time == 0 then lastnote.time = -lastnote.time end
+					if note.time == 0 then note.time = -lastnote.time end
+
+					local timebetween = note.time - lastnote.time  -- Get time between notes
+					if timebetween < -0.1 then timebetween = -timebetween end
+					if timebetween < overlapdistance and lastnote.id ==  lastnote.id and not overlap then -- Compare notes
+						if timebetween < -1 then
+							print(f('Next note has less time than this one! Doing nothing! %s',timebetween))
+						else
+							print(f('Skipping %s',timebetween))
+							if lastnote.length < note.length then note.length = lastnote.length end
+							skipnow = true -- Skip next note if this note and next note are the same
+						end
+					end
+					if doubleRemoval then
+						local timebetween = lastnote.time - note.time
+						if timebetween < overlapdistance and lastnote.id ~= note.id and sameside(lastnote.id,note.id) then
+							print(f('Skipping %s,%s',json.encode(lastnote),json.encode(note)))
+							skipnow = true -- Skip next note if this note and next note are the same
+						end
+					end
+				end
+				if not skipnow then
+					table.insert(chart.song.notes[sid].sectionNotes,{note.time,note.id,note.length})
+				end
 				
 				if syncsides then -- Syncing sides
 					local note2 = {} -- Reversed Note
@@ -225,11 +259,12 @@ for sid,section in pairs(chart.song.notes) do
 					note2.length = note.length	
 					table.insert(chart.song.notes[sid].sectionNotes,{note2.time,note2.id,note2.length})
 				
-					if nextnote and (math.floor(nextnote.time) == math.floor(note2.time) and math.floor(nextnote.time) == math.floor(note2.time)) then -- Compare notes
+					if lastnote and (math.floor(nextnote.time) == math.floor(note2.time) and math.floor(nextnote.time) == math.floor(note2.time)) then -- Compare notes
 						skip = true -- Skip if this note and next note are the same
 					end
 
 				end
+				lastnote = note
 			else
 				skip = false
 			end
@@ -238,7 +273,7 @@ for sid,section in pairs(chart.song.notes) do
 	end
 end
 chart.song.sections = sectionCount
-chart.song.speed = tonumber(chart.song.speed)
+chart.song.speed = tonumber(chart.song.speed) * songSpeed
 chart.song.bpm = tonumber(chart.song.bpm)
 if stdout then return io.write(json.encode(chart)) end
 if format then
