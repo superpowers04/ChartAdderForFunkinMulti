@@ -211,7 +211,7 @@ for sid,section in pairs(chart.song.notes) do
 						if timebetween < -0.5 then
 							print(f('Next note has less time than this one! Doing nothing! %s',timebetween))
 						else
-							print(f('Skipping %s',timebetween))
+							print(f('Skipping %s %s=%s',timebetween,note.id,nextnote.id))
 							if nextnote.length < note.length then note.length = nextnote.length end
 							skip = true -- Skip next note if this note and next note are the same
 						end
@@ -231,11 +231,11 @@ for sid,section in pairs(chart.song.notes) do
 
 					local timebetween = note.time - lastnote.time  -- Get time between notes
 					if timebetween < -0.1 then timebetween = -timebetween end
-					if timebetween < overlapdistance and lastnote.id ==  lastnote.id and not overlap then -- Compare notes
+					if timebetween < overlapdistance and note.id ==  lastnote.id and not overlap then -- Compare notes
 						if timebetween < -1 then
 							print(f('Next note has less time than this one! Doing nothing! %s',timebetween))
 						else
-							print(f('Skipping %s',timebetween))
+							print(f('Skipping %s %s=%s, Due to last note',timebetween,note.id,nextnote.id))
 							if lastnote.length < note.length then note.length = lastnote.length end
 							skipnow = true -- Skip next note if this note and next note are the same
 						end
