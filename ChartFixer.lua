@@ -62,7 +62,7 @@ do -- Argument handling
 			r  - Reverses the order of note information(Use this if your chart is missing random notes)
 			g  - prompts for overlap distance, the maximum distance between notes before it gets deleted
 			f  - Format output JSON to make human readable (Requires Node)
-			H  - Speeds up chart 1.25
+			s  - Prompts for speed of chart(Multiplies chart speed by given number)
 
 	]])
 	end
@@ -100,9 +100,10 @@ do -- Argument handling
 				overlapdistance = tonumber(io.read())
 				if not overlapdistance then print('Invalid number') os.exit() end
 			end,
-			H = function()
-				print('Speeding up chart')
-				songSpeed = 1.25
+			s = function()
+				print('Please specify speed multiplier')
+				songSpeed = tonumber(io.read())
+				if not overlapdistance then print('Invalid number') os.exit() end
 			end,
 		}
 		for argument in string.gmatch(arg[1],'[%d%w]') do
