@@ -11,6 +11,7 @@ local print = print
 local oldprint = print
 local overlapdistance = 0.00001
 local songSpeed = 1
+local randomizeNotes = false
 
 function sameside(side1,side)
 	return noteattribs.ids[noteattribs.mapped[tostring(side1)]][tostring(side)] or false
@@ -61,7 +62,7 @@ do -- Argument handling
 			r  - Reverses the order of note information(Use this if your chart is missing random notes)
 			g  - prompts for overlap distance, the maximum distance between notes before it gets deleted
 			f  - Format output JSON to make human readable (Requires Node)
-			h  - Speeds up chart 1.25
+			H  - Speeds up chart 1.25
 
 	]])
 	end
@@ -90,12 +91,16 @@ do -- Argument handling
 				oldprint('Reversing note info order')
 				noteReverse = not noteReverse
 			end,
+			R = function()
+				oldprint('Randomizing notes')
+				randomizeNotes=true
+			end,
 			g = function()
 				print('Please specify overlap distance')
 				overlapdistance = tonumber(io.read())
 				if not overlapdistance then print('Invalid number') os.exit() end
 			end,
-			h = function()
+			H = function()
 				print('Speeding up chart')
 				songSpeed = 1.25
 			end,
@@ -157,6 +162,10 @@ noteattribs.ids = {
 	right={
 		['4']=true,['5']=true,['6']=true,['7']=true
 	}
+}
+noteattribs.randCount = {
+	["right"] = {min=4,max=8},
+	["left"] = {min=0,max=3},
 }
 blocked = {
 	crossFade=true
@@ -248,10 +257,13 @@ for sid,section in pairs(chart.song.notes) do
 						end
 					end
 				end
+
+				if randomizeNotes then 
+					note.id = math.random(noteattribs.randCount[noteattribs.mapped[tostring(note.id)]].min,noteattribs.randCount[noteattribs.mapped[tostring(note.id)]].max) 
+				end
 				if not skipnow then
 					table.insert(chart.song.notes[sid].sectionNotes,{note.time,note.id,note.length})
 				end
-				
 				if syncsides then -- Syncing sides
 					local note2 = {} -- Reversed Note
 					note2.time = note.time
