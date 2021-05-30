@@ -28,17 +28,18 @@ If you end up having any issues with this, feel free to comment on the Gamebanan
 # ChartFixer (Basic terminal knowledge and computer common sense required) UNFINISHED
 Updater.lua does not automatically update
 **Requires http://dkolf.de/src/dkjson-lua.fsl/home to work**
-```Friday Night Funkin' Chart reparser. Reparses charts to fix any possible bugs
-		Chartfixer.lua [-cdSOf] (Input JSON or Input File path) [Output file dir]
+```Friday Night Funkin' Chart reparser. Reparses charts to fix any possible bugs and such
+		Chartfixer.lua [-cdSOfs] (Input JSON or Input File path) [Output file dir]
 			Using -h or providing no arguments will show this dialog
 		Arguments:
 			c  - Output to STDout
-			d  - Remove any double directional notes and makes chart a bit easier
+			d  - Remove any double directional notes
 			S  - Sync notes on both sides
 			O  - Don't remove any overlapping notes(Use this if your chart is missing random notes and overlapping notes aren't an issue)
 			r  - Reverses the order of note information(Use this if your chart is missing random notes)
 			g  - prompts for overlap distance, the maximum distance between notes before it gets deleted
-			f  - Format output JSON to make human readable (Requires NodeJS to be installed to work)
+			f  - Format output JSON to make human readable (Requires Node)
+			s  - Prompts for speed of chart(Multiplies chart speed by given number)
  ```
  Useful for if you want to make a chart easier(-d), if a chart has multiple notes in a single note(Causing inputs to not register) or if the chart just needs to be cleaned
 
