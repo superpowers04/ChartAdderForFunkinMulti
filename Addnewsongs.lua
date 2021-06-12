@@ -228,51 +228,6 @@ local chars = {
 
 		"animations_offsets":
 		[
-			{
-				"anim": "idle",
-				"player1": [0, 0],
-				"player2": [0, 0]
-			},
-			{
-				"anim": "singUP",
-				"player1": [14, 71],
-				"player2": [34, 71]
-			},
-			{
-				"anim": "singRIGHT",
-				"player1": [10, -60],
-				"player2": [10, -40]
-			},
-			{
-				"anim": "singLEFT",
-				"player1": [85, -23],
-				"player2": [170, -23]
-			},
-			{
-				"anim": "singDOWN",
-				"player1": [20, -160],
-				"player2": [60, -160]
-			},
-			{
-				"anim": "singUPmiss",
-				"player1": [14, 71],
-				"player2": [34, 71]
-			},
-			{
-				"anim": "singRIGHTmiss",
-				"player1": [10, -60],
-				"player2": [10, -40]
-			},
-			{
-				"anim": "singLEFTmiss",
-				"player1": [85, -23],
-				"player2": [170, -23]
-			},
-			{
-				"anim": "singDOWNmiss",
-				"player1": [20, -160],
-				"player2": [60, -160]
-			}
 		],
 
 		"common_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on common stages as Player 1 and 2",
@@ -365,53 +320,53 @@ local chars = {
 			"scared_anim": "",
 
 			"animations_offsets":
-			[
+			[			
 				{
 					"anim": "idle",
-					"player1": [-220, 0],
+					"player1": [0, 0],
 					"player2": [0, 0]
 				},
 				{
 					"anim": "singUP",
-					"player1": [-180, 20],
-					"player2": [-29, 27]
+					"player1": [0, 0],
+					"player2": [0, 0]
 				},
 				{
 					"anim": "singRIGHT",
-					"player1": [-240, 0],
-					"player2": [-88, -13]
+					"player1": [0, 0],
+					"player2": [0, 0]
 				},
 				{
 					"anim": "singLEFT",
-					"player1": [-90, -10],
-					"player2": [20, -8]
+					"player1": [0, 0],
+					"player2": [0, 0]
 				},
 				{
 					"anim": "singDOWN",
-					"player1": [-100, -70],
-					"player2": [171, -80]
+					"player1": [0, 0],
+					"player2": [0, 0]
 				},
 				{
 					"anim": "singUPmiss",
-					"player1": [-180, 40],
-					"player2": [-29, 27]
+					"player1": [0, 0],
+					"player2": [0, 0]
 				},
 				{
 					"anim": "singRIGHTmiss",
-					"player1": [-220, 30],
-					"player2": [-88, -13]
+					"player1": [0, 0],
+					"player2": [0, 0]
 				},
 				{
 					"anim": "singLEFTmiss",
-					"player1": [-180, 10],
-					"player2": [20, 11]
+					"player1": [0, 0],
+					"player2": [0,0]
 				},
 				{
 					"anim": "singDOWNmiss",
-					"player1": [-120, -20],
-					"player2": [171, -70]
+					"player1": [0, 0],
+					"player2": [0, 0]
 				}
-			],
+			], "":"These are here as a template, by default they do nothing",
 
 			"common_stage_offset": [0, 0, 0, 0],
 			"pixel_stage_offset": [0, 0, 0, 0],
@@ -505,8 +460,53 @@ local chars = {
 		"scared_anim": "",
 
 		"animations_offsets":
-		[
-		],
+		[			
+			{
+				"anim": "idle",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			},
+			{
+				"anim": "singUP",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			},
+			{
+				"anim": "singRIGHT",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			},
+			{
+				"anim": "singLEFT",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			},
+			{
+				"anim": "singDOWN",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			},
+			{
+				"anim": "singUPmiss",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			},
+			{
+				"anim": "singRIGHTmiss",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			},
+			{
+				"anim": "singLEFTmiss",
+				"player1": [0, 0],
+				"player2": [0,0]
+			},
+			{
+				"anim": "singDOWNmiss",
+				"player1": [0, 0],
+				"player2": [0, 0]
+			}
+		], "":"These are here as a template, by default they do nothing",
 
 		"common_stage_offset": [0, 0, 0, 0],
 		"pixel_stage_offset": [0, 0, 0, 0],
@@ -608,48 +608,53 @@ local chars = {
 			"scared_anim": "", "": "Which animation should it use for Spooky Month stage scare",
 
 			"animations_offsets":
-			[
+			[			
+				{
+					"anim": "idle",
+					"player1": [0, 0],
+					"player2": [0, 0]
+				},
 				{
 					"anim": "singUP",
-					"player1": [-57, 24],
-					"player2": [-15, 24]
+					"player1": [0, 0],
+					"player2": [0, 0]
 				},
 				{
 					"anim": "singRIGHT",
-					"player1": [-75, -20],
-					"player2": [-85, -14]
-				},
-			    {
-					"anim": "singDOWN",
-					"player1": [-24, -138],
-					"player2": [47, -138]
+					"player1": [0, 0],
+					"player2": [0, 0]
 				},
 				{
 					"anim": "singLEFT",
-					"player1": [97, -10],
-					"player2": [137, -24]
+					"player1": [0, 0],
+					"player2": [0, 0]
+				},
+				{
+					"anim": "singDOWN",
+					"player1": [0, 0],
+					"player2": [0, 0]
 				},
 				{
 					"anim": "singUPmiss",
-					"player1": [-57, 24],
-					"player2": [-15, 24]
+					"player1": [0, 0],
+					"player2": [0, 0]
 				},
 				{
 					"anim": "singRIGHTmiss",
-					"player1": [-75, -20],
-					"player2": [-85, -14]
-				},
-			    {
-					"anim": "singDOWNmiss",
-					"player1": [-24, -138],
-					"player2": [47, -138]
+					"player1": [0, 0],
+					"player2": [0, 0]
 				},
 				{
 					"anim": "singLEFTmiss",
-					"player1": [97, -10],
-					"player2": [137, -24]
+					"player1": [0, 0],
+					"player2": [0,0]
+				},
+				{
+					"anim": "singDOWNmiss",
+					"player1": [0, 0],
+					"player2": [0, 0]
 				}
-			],
+			], "":"These are here as a template, by default they do nothing",
 
 			"common_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on common stages as Player 1 and 2",
 			"pixel_stage_offset": [0, 0, 0, 0], "": "Your character's offset ingame on Pixel stages as Player 1 and 2",
@@ -1012,6 +1017,7 @@ function getlist(path) -- function to make things cleaner
 	local count = 0
 	for d in io.popen(f(dircommand,path)):lines() do -- This method is inefficient but makes sure that all songs are added to songs.txt
 		if (not string.match(addstr,d) or string.sub(d,-3) == '.ogg') and not string.match(d,'%!') then
+			d=string.gsub(d,'[^\\]\\ '," ") -- Counter measure for " " causing folders being detected as an invalid folder
 			local name = d
 			d = path .. d
 			print(d)
@@ -1097,6 +1103,7 @@ function getlistchar(path) -- function to make things cleaner
 	local count = 0
 	for d in io.popen(f(dircommand,path)):lines() do -- This method is inefficient but makes sure that all songs are added to songs.txt
 		if (not string.match(addstr,d) or string.sub(d,-3) == '.ogg') and not string.match(d,'%!') then
+			d=string.gsub(d,'[^\\]\\ '," ") -- Counter measure for " " causing folders being detected as an invalid folder
 			local name = d
 			d = path .. d
 			print(d)
@@ -1135,6 +1142,9 @@ function getlistchar(path) -- function to make things cleaner
 													err = k
 													break
 												end
+												if string.match(k,'sing') then 
+													table.insert(animlist,f('		{\n			"anim": %q,\n			"name": %q,\n			"fps": 24,\n			"loop": true,\n			"indices": []\n		}',k .. 'miss',animid) )-- Add miss anim info to list
+												end 
 												table.insert(animlist,f('		{\n			"anim": %q,\n			"name": %q,\n			"fps": 24,\n			"loop": true,\n			"indices": []\n		}',k,animid) )-- Add anim info to list
 											end
 											if not err then
@@ -1232,9 +1242,16 @@ if iswindows then dircommand = 'dir %q /b' end
 
 -- Finding path for charts/songs
 local path = "./"
-if fileexist('./filepath.txt','r') then
-	path,legacy = string.match(io.open('./filepath.txt','r'):read('*a'),'path="(.-)"\nlegacy=(.+)') 
-	if not path then path,legacy = io.open('./filepath.txt','r'):read('*a'),true end
+if arg[1] then
+	if not io.open(arg[1]) then
+		return print("Invalid path specified!")
+	end
+	path = arg[1]
+else
+	if fileexist('./filepath.txt','r') then
+		path,legacy = string.match(io.open('./filepath.txt','r'):read('*a'),'path="(.-)"\nlegacy=(.+)') 
+		if not path then path,legacy = io.open('./filepath.txt','r'):read('*a'),true end
+	end
 end
 
 if not fileexist(path .. 'songs.txt') then
