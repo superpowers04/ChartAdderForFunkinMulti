@@ -925,7 +925,6 @@ local chars = {
 	}]]
 }
 chars.init = function(self) -- Just here to prevent repeating code
-	
 	self.bf = self.boyfriend
 	self.bfcar = self.boyfriend
 	self.bfchristmas = self.boyfriend
@@ -1296,6 +1295,7 @@ Press S and then Enter to skip or Press enter to continue]])
 	skip = question({'s','sk','ski','skip','y','yes'})
 end
 if (not skip) or legacy then
+	if legacy then print("It looks like you're using 3.1, 3.1 does not support custom characters so the character adder is disabled.\n3.2 indev can be found from the Friday Night Funkin Modding Discord if you'd like to try it, However it is more unstable.\n") end
 	print([[Would you like to manually specify icons or stages?
 By default icons are set to 'Pico' and stages are set to 'Stage'
 If you do not understand this or don't then just press enter, otherwise type 'y' or 'yes']])
